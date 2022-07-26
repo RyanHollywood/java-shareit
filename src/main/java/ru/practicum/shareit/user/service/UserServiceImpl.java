@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public Collection<UserDto> getAll() {
-        Set<UserDto> userDtoSet= new TreeSet<>((user1, user2) -> (int) (user1.getId() - user2.getId()));
+        Set<UserDto> userDtoSet = new TreeSet<>((user1, user2) -> (int) (user1.getId() - user2.getId()));
         storage.getAll().stream()
                 .map(UserMapper::toUserDto)
                 .forEach(userDtoSet::add);

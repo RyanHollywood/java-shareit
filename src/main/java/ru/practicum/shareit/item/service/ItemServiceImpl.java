@@ -72,7 +72,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public Collection<ItemDto> getAll(long ownerId) {
-        Set<ItemDto> itemDtoSet= new TreeSet<>((item1, item2) -> (int) (item1.getId() - item2.getId()));
+        Set<ItemDto> itemDtoSet = new TreeSet<>((item1, item2) -> (int) (item1.getId() - item2.getId()));
         storage.getAll().stream()
                 .filter(item -> item.getOwnerId() == ownerId)
                 .map(ItemMapper::toItemDto)
@@ -82,7 +82,7 @@ public class ItemServiceImpl implements ItemService {
 
     public Collection<ItemDto> search(long ownerId, String text) {
 
-        Set<ItemDto> itemDtoSet= new TreeSet<>((item1, item2) -> (int) (item1.getId() - item2.getId()));
+        Set<ItemDto> itemDtoSet = new TreeSet<>((item1, item2) -> (int) (item1.getId() - item2.getId()));
         if (text.isEmpty()) {
             return itemDtoSet;
         }
