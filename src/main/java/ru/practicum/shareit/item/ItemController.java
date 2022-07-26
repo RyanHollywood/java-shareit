@@ -30,8 +30,8 @@ public class ItemController {
     }
 
     @PatchMapping("/{id}")
-    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") long ownerId, @PathVariable long id, @RequestBody JsonNode body) {
-        return itemService.update(ownerId, id, body);
+    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") long ownerId, @PathVariable long id, @RequestBody JsonNode object) {
+        return itemService.update(ownerId, id, object);
     }
 
     @GetMapping("/{id}")

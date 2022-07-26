@@ -8,9 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
+import ru.practicum.shareit.exceptions.errors.ChangeOwnerAttempt;
 import ru.practicum.shareit.exceptions.errors.NoUserFound;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.storage.ItemStorage;
 
 import java.util.Collection;
@@ -41,7 +43,7 @@ public class ItemServiceImpl implements ItemService {
         ResponseEntity<String> responseEntity =
                 restTemplate.getForEntity("http://localhost:8080/users/" + ownerId, String.class);
         if (responseEntity.getStatusCode().isError()) {
-            throw new NoUserFound("NO OWNER");
+            throw new NoUserFound("NO SUCH OWNER");
         }
 
         itemDto.setId(storage.generateId());
@@ -49,8 +51,20 @@ public class ItemServiceImpl implements ItemService {
         return itemDto;
     }
 
-    public ItemDto update(long ownerId, long id, JsonNode body) {
-        return null;
+    public ItemDto update(long ownerId, long id, JsonNode object) {
+        if (ownerId != storage.get(id).getOwnerId()) {
+            throw new ChangeOwnerAttempt("USER NOT OWNER");
+        }
+        if (object.has("name")) {
+            storage.get(id).setName(object.get("name").textValue());
+        }
+        if (object.has("description")) {
+            storage.get(id).setDescription(object.get("description").textValue());
+        }
+        if (object.has("available")) {
+            storage.get(id).setAvailable(object.get("available").asBoolean());
+        }
+        return ItemMapper.toItemDto(storage.get(id));
     }
 
     public ItemDto getItem(long ownerId, long id) {
@@ -60,13 +74,24 @@ public class ItemServiceImpl implements ItemService {
     public Collection<ItemDto> getAll(long ownerId) {
         Set<ItemDto> itemDtoSet= new TreeSet<>((item1, item2) -> (int) (item1.getId() - item2.getId()));
         storage.getAll().stream()
+                .filter(item -> item.getOwnerId() == ownerId)
                 .map(ItemMapper::toItemDto)
                 .forEach(itemDtoSet::add);
         return itemDtoSet;
     }
 
     public Collection<ItemDto> search(long ownerId, String text) {
-        return null;
+
+        Set<ItemDto> itemDtoSet= new TreeSet<>((item1, item2) -> (int) (item1.getId() - item2.getId()));
+        if (text.isEmpty()) {
+            return itemDtoSet;
+        }
+        storage.getAll().stream()
+                .filter(Item::getAvailable)
+                .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase()) || item.getDescription().toLowerCase().contains(text.toLowerCase()))
+                .map(ItemMapper::toItemDto)
+                .forEach(itemDtoSet::add);
+        return itemDtoSet;
     }
 
     public void delete(long id) {
