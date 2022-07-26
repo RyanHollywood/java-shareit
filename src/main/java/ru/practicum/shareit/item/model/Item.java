@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.practicum.shareit.requests.ItemRequest;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -11,7 +11,9 @@ import javax.validation.constraints.NotNull;
  */
 
 @Data
+@AllArgsConstructor
 public class Item {
+    @NotNull
     long id;
 
     @NotNull
@@ -26,5 +28,4 @@ public class Item {
     Boolean available;
 
     long ownerId;
-    ItemRequest request;
 }

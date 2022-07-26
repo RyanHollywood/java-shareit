@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.errors.DuplicateEmailFound;
+import ru.practicum.shareit.exceptions.errors.NoUserFound;
 import ru.practicum.shareit.storage.UserStorage;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -51,6 +52,10 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserDto getUser(long id) {
+        if (!storage.contains(id)) {
+            throw new NoUserFound("NO SUCH USER");
+        }
+        log.debug("GET MAPPING SUCCESSFUL - USER FOUND");
         return UserMapper.toUserDto(storage.get(id));
     }
 
@@ -59,10 +64,12 @@ public class UserServiceImpl implements UserService {
         storage.getAll().stream()
                 .map(UserMapper::toUserDto)
                 .forEach(userDtoSet::add);
+        log.debug("GET MAPPING SUCCESSFUL - USERS FOUND");
         return userDtoSet;
     }
 
     public void deleteUser(long id) {
+        log.debug("DELETE MAPPING SUCCESSFUL - USER DELETED");
         storage.delete(id);
     }
 }

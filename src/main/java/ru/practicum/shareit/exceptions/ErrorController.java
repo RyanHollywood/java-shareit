@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exceptions.errors.ChangeOwnerAttempt;
 import ru.practicum.shareit.exceptions.errors.DuplicateEmailFound;
+import ru.practicum.shareit.exceptions.errors.NoUserFound;
 
 @RestControllerAdvice
 public class ErrorController {
@@ -19,6 +20,12 @@ public class ErrorController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleIncorrectParameterException(final ChangeOwnerAttempt exception) {
+        return exception.getMessage();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleIncorrectParameterException(final NoUserFound exception) {
         return exception.getMessage();
     }
 }
