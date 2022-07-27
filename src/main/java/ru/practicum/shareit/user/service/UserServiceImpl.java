@@ -27,25 +27,27 @@ public class UserServiceImpl implements UserService {
 
     public UserDto create(UserDto userDto) {
         if (storage.checkDuplicateEmail(userDto.getEmail())) {
-            log.warn("POST MAPPING UNSUCCESSFUL - DUPLICATE EMAIL FOUND");
-            throw new DuplicateEmailFound("DUPLICATE EMAIL FOUND");
+            log.warn("POST MAPPING UNSUCCESSFUL - DUPLICATE EMAIL " + userDto.getEmail() + " FOUND");
+            throw new DuplicateEmailFound("DUPLICATE EMAIL " + userDto.getEmail() + " FOUND");
         }
         userDto.setId(storage.generateId());
         storage.add(UserMapper.toUser(userDto));
-        log.debug("POST MAPPING SUCCESSFUL - USER CREATED");
+        log.debug("POST MAPPING SUCCESSFUL - USER ID:" + userDto.getId() + " CREATED");
         return userDto;
     }
 
     public UserDto update(JsonNode object, long id) {
         if (object.has("name")) {
             storage.get(id).setName(object.get("name").textValue());
+            log.debug("PATCH REQUEST SUCCESSFUL - USER ID:" + id + " NAME UPDATED");
         }
         if (object.has("email")) {
             if (storage.checkDuplicateEmail(object.get("email").textValue())) {
-                log.warn("PATCH MAPPING UNSUCCESSFUL - DUPLICATE EMAIL FOUND");
+                log.warn("PATCH REQUEST UNSUCCESSFUL - USER ID:" + id + " UPDATING EMAIL ALREADY USED");
                 throw new DuplicateEmailFound("DUPLICATE EMAIL FOUND");
             }
             storage.get(id).setEmail(object.get("email").textValue());
+            log.debug("PATCH REQUEST SUCCESSFUL - USER ID:" + id + " EMAIL UPDATED");
         }
         log.debug("PATCH MAPPING SUCCESSFUL - USER UPDATED");
         return UserMapper.toUserDto(storage.get(id));
@@ -53,9 +55,10 @@ public class UserServiceImpl implements UserService {
 
     public UserDto getUser(long id) {
         if (!storage.contains(id)) {
-            throw new NoUserFound("NO SUCH USER");
+            log.warn("GET REQUEST UNSUCCESSFUL - USER ID:" + id + " NOT FOUND");
+            throw new NoUserFound("NO USER ID:" + id + " NOT FOUND");
         }
-        log.debug("GET MAPPING SUCCESSFUL - USER FOUND");
+        log.debug("GET REQUEST SUCCESSFUL - USER ID:" + id + " FOUND");
         return UserMapper.toUserDto(storage.get(id));
     }
 
@@ -64,12 +67,16 @@ public class UserServiceImpl implements UserService {
         storage.getAll().stream()
                 .map(UserMapper::toUserDto)
                 .forEach(userDtoSet::add);
-        log.debug("GET MAPPING SUCCESSFUL - USERS FOUND");
+        log.debug("GET REQUEST SUCCESSFUL - " + userDtoSet.size() + " USERS FOUND");
         return userDtoSet;
     }
 
     public void deleteUser(long id) {
-        log.debug("DELETE MAPPING SUCCESSFUL - USER DELETED");
+        if (!storage.contains(id)) {
+            log.warn("DELETE REQUEST UNSUCCESSFUL - USER ID:" + id + " NOT FOUND");
+            throw new NoUserFound("NO USER ID:" + id + " NOT FOUND");
+        }
         storage.delete(id);
+        log.debug("DELETE REQUEST SUCCESSFUL - USER ID:" + id + " DELETED");
     }
 }

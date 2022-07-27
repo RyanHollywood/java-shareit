@@ -24,7 +24,7 @@ import java.util.TreeSet;
 @Slf4j
 public class ItemServiceImpl implements ItemService {
 
-    private ItemStorage storage;
+    private final ItemStorage storage;
 
     @Autowired
     public ItemServiceImpl(ItemStorage storage) {
@@ -117,7 +117,7 @@ public class ItemServiceImpl implements ItemService {
             log.warn("DELETE REQUEST UNSUCCESSFUL - ITEM ID:" + id + " NOT FOUND");
             throw new ItemNotFound("NO ITEM ID:" + id + " FOUND");
         }
-        log.debug("DELETE REQUEST SUCCESSFUL - ITEM ID:" + id + " DELETED");
         storage.delete(id);
+        log.debug("DELETE REQUEST SUCCESSFUL - ITEM ID:" + id + " DELETED");
     }
 }
