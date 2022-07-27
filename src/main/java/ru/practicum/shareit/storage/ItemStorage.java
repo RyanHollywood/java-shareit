@@ -37,4 +37,8 @@ public class ItemStorage {
     public void delete(long id) {
         storage.remove(id);
     }
+
+    public boolean contains(long id) {
+        return storage.containsKey(id);
+    }
 }
