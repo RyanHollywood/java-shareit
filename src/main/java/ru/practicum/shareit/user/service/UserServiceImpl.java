@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.errors.DuplicateEmailFound;
 import ru.practicum.shareit.exceptions.errors.NoUserFound;
-import ru.practicum.shareit.storage.UserStorage;
+import ru.practicum.shareit.user.storage.UserStorage;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
 
@@ -25,6 +25,7 @@ public class UserServiceImpl implements UserService {
         this.storage = storage;
     }
 
+    @Override
     public UserDto create(UserDto userDto) {
         if (storage.checkDuplicateEmail(userDto.getEmail())) {
             log.warn("POST MAPPING UNSUCCESSFUL - DUPLICATE EMAIL " + userDto.getEmail() + " FOUND");
@@ -36,6 +37,7 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
+    @Override
     public UserDto update(JsonNode object, long id) {
         if (object.has("name")) {
             storage.get(id).setName(object.get("name").textValue());
@@ -53,6 +55,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(storage.get(id));
     }
 
+    @Override
     public UserDto getUser(long id) {
         if (!storage.contains(id)) {
             log.warn("GET REQUEST UNSUCCESSFUL - USER ID:" + id + " NOT FOUND");
@@ -62,6 +65,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(storage.get(id));
     }
 
+    @Override
     public Collection<UserDto> getAll() {
         Set<UserDto> userDtoSet = new TreeSet<>((user1, user2) -> (int) (user1.getId() - user2.getId()));
         storage.getAll().stream()
@@ -71,6 +75,7 @@ public class UserServiceImpl implements UserService {
         return userDtoSet;
     }
 
+    @Override
     public void deleteUser(long id) {
         if (!storage.contains(id)) {
             log.warn("DELETE REQUEST UNSUCCESSFUL - USER ID:" + id + " NOT FOUND");

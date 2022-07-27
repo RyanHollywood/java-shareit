@@ -1,4 +1,4 @@
-package ru.practicum.shareit.storage;
+package ru.practicum.shareit.user.storage;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.user.User;
