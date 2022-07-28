@@ -11,20 +11,20 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class ItemDto {
-    long id;
+    private long id;
 
     @NotNull
     @NotBlank
-    String name;
+    private String name;
 
     @NotNull
     @NotBlank
-    String description;
+    private String description;
 
     @NotNull
-    Boolean available;
+    private Boolean available;
 
-    long ownerId;
+    private long ownerId;
 
     public ItemDto(long id, String name, String description, Boolean available, long ownerId) {
         this.id = id;

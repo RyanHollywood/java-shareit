@@ -8,15 +8,15 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class UserDto {
-    long id;
+    private long id;
 
     @NotNull
     @NotBlank
-    String name;
+    private String name;
 
     @NotNull
     @Email
-    String email;
+    private String email;
 
     public UserDto(long id, String name, String email) {
         this.id = id;
