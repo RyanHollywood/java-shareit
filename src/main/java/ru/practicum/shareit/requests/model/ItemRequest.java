@@ -1,31 +1,27 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.requests.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 /**
  * // TODO .
  */
 
 @Data
-@AllArgsConstructor
-public class Item {
+public class ItemRequest {
     @NotNull
     private long id;
-
-    @NotNull
-    @NotBlank
-    private String name;
 
     @NotNull
     @NotBlank
     private String description;
 
     @NotNull
-    private Boolean available;
+    private long requestor;
 
-    private long ownerId;
+    @NotNull
+    private LocalDateTime created;
 }
