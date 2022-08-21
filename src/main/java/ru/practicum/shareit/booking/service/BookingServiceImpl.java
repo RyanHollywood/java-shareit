@@ -136,7 +136,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public void delete() {
-
     }
 
     private List<BookingDto> filterByState(String state, List<Booking> bookings) {

@@ -37,7 +37,8 @@ public class UserServiceImpl implements UserService {
     public UserDto update(long id, JsonNode object) {
         User userToUpdate = repository.findById(id).orElseThrow(() -> {
             log.warn("");
-            return new NotFound("");});
+            return new NotFound("");
+        });
         if (object.has("name")) {
             userToUpdate.setName(object.get("name").textValue());
             log.debug("");
@@ -53,7 +54,8 @@ public class UserServiceImpl implements UserService {
     public UserDto getById(long id) {
         User userToGet = repository.findById(id).orElseThrow(() -> {
             log.warn("");
-            return new NotFound("");});
+            return new NotFound("");
+        });
         log.debug("");
         return UserMapper.toUserDto(userToGet);
     }
