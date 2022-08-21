@@ -1,14 +1,12 @@
 package ru.practicum.shareit.exceptions;
 
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exceptions.errors.BadRequest;
-import ru.practicum.shareit.exceptions.errors.NotFound;
 import ru.practicum.shareit.exceptions.errors.Conflict;
+import ru.practicum.shareit.exceptions.errors.NotFound;
 import ru.practicum.shareit.exceptions.errors.UnsupportedState;
 
 import java.util.Map;

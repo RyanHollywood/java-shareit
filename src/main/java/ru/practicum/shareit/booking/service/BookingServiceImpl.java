@@ -28,7 +28,8 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
-    private final BookingStatus DEFAULT_STATUS = BookingStatus.WAITING;
+    //private final BookingStatus DEFAULT_STATUS = BookingStatus.WAITING;
+    private final BookingStatus defaultStatus = BookingStatus.WAITING;
 
     @Autowired
     public BookingServiceImpl(BookingRepository bookingRepository, ItemRepository itemRepository, UserRepository userRepository) {
@@ -62,7 +63,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = BookingMapper.toBooking(requestDto);
         booking.setItem(itemToBook);
         booking.setBooker(booker);
-        booking.setStatus(DEFAULT_STATUS);
+        booking.setStatus(defaultStatus);
         return BookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
