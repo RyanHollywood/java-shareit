@@ -43,6 +43,11 @@ public class BookingController {
         return bookingService.getAll(userId, state);
     }
 
+    @DeleteMapping("/{bookingId}")
+    public void delete(@PathVariable long bookingId) {
+        bookingService.delete(bookingId);
+    }
+
     @GetMapping("/owner")
     public List<BookingDto> getAllByOwner(@RequestHeader(value = "X-Sharer-User-Id") long ownerId,
                                           @RequestParam(value = "state", required = false, defaultValue = "ALL") String state) {

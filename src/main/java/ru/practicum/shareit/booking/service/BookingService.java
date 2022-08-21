@@ -16,5 +16,5 @@ public interface BookingService {
 
     List<BookingDto> getAllByOwner(long ownerId, String state);
 
-    void delete();
+    void delete(long id);
 }

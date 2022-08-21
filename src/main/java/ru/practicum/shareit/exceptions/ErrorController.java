@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exceptions.errors.BadRequest;
 import ru.practicum.shareit.exceptions.errors.Conflict;
 import ru.practicum.shareit.exceptions.errors.NotFound;
-import ru.practicum.shareit.exceptions.errors.UnsupportedState;
+import ru.practicum.shareit.exceptions.errors.InternalServerError;
 
 import java.util.Map;
 
@@ -34,7 +34,7 @@ public class ErrorController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map handleIncorrectParameterException(final UnsupportedState exception) {
+    public Map handleIncorrectParameterException(final InternalServerError exception) {
         return Map.of("error", exception.getMessage());
     }
 }

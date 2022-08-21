@@ -10,14 +10,12 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
-import javax.transaction.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
@@ -29,23 +27,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) {
-        log.debug("");
+        log.debug("User created");
         return UserMapper.toUserDto(repository.save(UserMapper.toUser(userDto)));
     }
 
     @Override
     public UserDto update(long id, JsonNode object) {
         User userToUpdate = repository.findById(id).orElseThrow(() -> {
-            log.warn("");
-            return new NotFound("");
+            log.warn("User not found");
+            return new NotFound("User not found");
         });
         if (object.has("name")) {
             userToUpdate.setName(object.get("name").textValue());
-            log.debug("");
+            log.debug("User name updated");
         }
         if (object.has("email")) {
             userToUpdate.setEmail(object.get("email").textValue());
-            log.debug("");
+            log.debug("User email updated");
         }
         return UserMapper.toUserDto(repository.save(userToUpdate));
     }
@@ -53,16 +51,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getById(long id) {
         User userToGet = repository.findById(id).orElseThrow(() -> {
-            log.warn("");
+            log.warn("User not found");
             return new NotFound("");
         });
-        log.debug("");
+        log.debug("User found");
         return UserMapper.toUserDto(userToGet);
     }
 
     @Override
     public List<UserDto> getAll() {
-        log.debug("");
+        log.debug("Users found");
         return repository.findAll().stream()
                 .map(UserMapper::toUserDto)
                 .sorted(Comparator.comparingLong(UserDto::getId))
@@ -71,7 +69,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(long id) {
-        log.debug("");
+        log.debug("User deleted");
         repository.deleteById(id);
     }
 }

@@ -50,34 +50,34 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto create(ItemDto itemDto, long ownerId) {
         if (!userRepository.existsById(ownerId)) {
-            log.warn("No owner");
-            throw new NotFound("");
+            log.warn("Owner not exists");
+            throw new NotFound("Owner not exists");
         }
-        log.debug("");
+        log.debug("Item created");
         return ItemMapper.toItemDto(itemRepository.save(ItemMapper.toItem(itemDto)));
     }
 
     @Override
     public ItemDto update(long id, long ownerId, JsonNode object) {
         Item itemToUpdate = itemRepository.findById(id).orElseThrow(() -> {
-            log.warn("");
-            throw new NotFound("");
+            log.warn("Item not found");
+            throw new NotFound("Item not found");
         });
         if (ownerId != itemRepository.findById(id).get().getOwnerId()) {
-            log.warn("");
-            throw new NotFound("Change owner attempt");
+            log.warn("User is not owner of item");
+            throw new NotFound("User is not owner of item");
         }
         if (object.has("name")) {
             itemToUpdate.setName(object.get("name").textValue());
-            log.debug("");
+            log.debug("Item name updated");
         }
         if (object.has("description")) {
             itemToUpdate.setDescription(object.get("description").textValue());
-            log.debug("");
+            log.debug("Item description updated");
         }
         if (object.has("available")) {
             itemToUpdate.setAvailable(object.get("available").asBoolean());
-            log.debug("");
+            log.debug("Item status updated");
         }
         return ItemMapper.toItemDto(itemRepository.save(itemToUpdate));
     }
@@ -85,8 +85,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getById(long id, long ownerId) {
         Item itemToGet = itemRepository.findById(id).orElseThrow(() -> {
-            log.warn("");
-            return new NotFound("NO SUCH ITEM");
+            log.warn("Item not found");
+            return new NotFound("Item not found");
         });
         ItemDto itemDtoToGet = ItemMapper.toItemDto(itemToGet);
         List<Booking> bookings = bookingRepository.findAllByItemIdInOrderByStartDesc(List.of(id));
@@ -101,13 +101,13 @@ public class ItemServiceImpl implements ItemService {
         itemDtoToGet.setComments(commentRepository.findAll().stream()
                 .map(CommentMapper::toCommentDto)
                 .collect(Collectors.toList()));
-        log.debug("");
+        log.debug("Item found");
         return itemDtoToGet;
     }
 
     @Override
     public List<ItemDto> getAll(long ownerId) {
-        log.debug("");
+        log.debug("Items by owner found");
         return itemRepository.findAllByOwnerId(ownerId).stream()
                 .map(ItemMapper::toItemDto)
                 .map(itemDto -> getById(itemDto.getId(), itemDto.getOwnerId()))
@@ -120,6 +120,7 @@ public class ItemServiceImpl implements ItemService {
         if (text == null || text.isBlank()) {
             return Collections.emptyList();
         }
+        log.debug("Items found by search");
         return itemRepository.search(text.toLowerCase()).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
@@ -128,27 +129,30 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public void delete(long id) {
         itemRepository.deleteById(id);
-        log.debug("");
+        log.debug("Item deleted");
     }
 
     @Override
     public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
         List<BookingDto> bookings = bookingService.getAll(userId, "PAST");
-        List<User> bookers = bookings.stream().map(BookingDto::getBooker).collect(Collectors.toList());
-        List<Long> bookersIds = bookers.stream().map(User::getId).collect(Collectors.toList());
-        if (bookersIds.size() == 0) {
-            throw new BadRequest("");
+        List<Long> bookers = bookings.stream()
+                .map(BookingDto::getBooker)
+                .map(User::getId)
+                .collect(Collectors.toList());
+        if (bookers.size() == 0) {
+            throw new BadRequest("User have not booked the item");
         }
         Comment commentToAdd = CommentMapper.toComment(commentDto);
         commentToAdd.setItem(itemRepository.findById(userId).orElseThrow(() -> {
-            log.warn("");
-            throw new NotFound("");
+            log.warn("Item not found");
+            throw new NotFound("Item not found");
         }));
         commentToAdd.setAuthor(userRepository.findById(userId).orElseThrow(() -> {
-            log.warn("");
-            throw new NotFound("");
+            log.warn("Author not found");
+            throw new NotFound("Author not found");
         }));
         commentToAdd.setCreated(LocalDateTime.now());
+        log.debug("Comment created");
         return CommentMapper.toCommentDto(commentRepository.save(commentToAdd));
     }
 }
