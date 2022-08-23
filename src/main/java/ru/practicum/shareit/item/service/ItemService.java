@@ -1,21 +1,24 @@
 package ru.practicum.shareit.item.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface ItemService {
 
-    ItemDto create(long ownerId, ItemDto itemDto);
+    ItemDto create(ItemDto itemDto, long ownerId);
 
-    ItemDto update(long ownerId, long id, JsonNode object);
+    ItemDto update(long id, long ownerId, JsonNode object);
 
-    ItemDto getItem(long ownerId, long id);
+    ItemDto getById(long id, long ownerId);
 
-    Collection<ItemDto> getAll(long ownerId);
+    List<ItemDto> getAll(long ownerId);
 
-    Collection<ItemDto> search(long ownerId, String text);
+    List<ItemDto> search(String text, long ownerId);
 
     void delete(long id);
+
+    CommentDto addComment(long userId, long itemId, CommentDto commentDto);
 }

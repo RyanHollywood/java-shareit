@@ -3,121 +3,156 @@ package ru.practicum.shareit.item.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.DefaultResponseErrorHandler;
-import org.springframework.web.client.RestTemplate;
-import ru.practicum.shareit.exceptions.errors.ChangeOwnerAttempt;
-import ru.practicum.shareit.exceptions.errors.ItemNotFound;
-import ru.practicum.shareit.exceptions.errors.NoUserFound;
+import ru.practicum.shareit.booking.BookingMapper;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.booking.storage.BookingRepository;
+import ru.practicum.shareit.comment.CommentMapper;
+import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.model.Comment;
+import ru.practicum.shareit.comment.storage.CommentRepository;
+import ru.practicum.shareit.exceptions.errors.BadRequest;
+import ru.practicum.shareit.exceptions.errors.NotFound;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.storage.ItemStorage;
+import ru.practicum.shareit.item.storage.ItemRepository;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.storage.UserRepository;
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.TreeSet;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class ItemServiceImpl implements ItemService {
 
-    private final ItemStorage storage;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
+    private final BookingService bookingService;
+    private final BookingRepository bookingRepository;
+    private final CommentRepository commentRepository;
 
     @Autowired
-    public ItemServiceImpl(ItemStorage storage) {
-        this.storage = storage;
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, BookingService bookingService, BookingRepository bookingRepository, CommentRepository commentRepository) {
+        this.itemRepository = itemRepository;
+        this.userRepository = userRepository;
+        this.bookingService = bookingService;
+        this.bookingRepository = bookingRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Override
-    public ItemDto create(long ownerId, ItemDto itemDto) {
-
-        //using RestTemplate to check if owner is present
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {
-            @Override
-            public boolean hasError(HttpStatus statusCode) {
-                return false;
-            }
-        });
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://localhost:8080/users/" + ownerId, String.class);
-        if (responseEntity.getStatusCode().isError()) {
-            log.warn("POST REQUEST UNSUCCESSFUL - ITEM NOT CREATED");
-            throw new NoUserFound("NO OWNER WITH ID:" + ownerId + " FOUND");
+    public ItemDto create(ItemDto itemDto, long ownerId) {
+        if (!userRepository.existsById(ownerId)) {
+            log.warn("Owner not exists");
+            throw new NotFound("Owner not exists");
         }
-
-        itemDto.setId(storage.generateId());
-        storage.add(ItemMapper.toItem(itemDto));
-        log.debug("POST REQUEST SUCCESSFUL - ITEM ID:" + itemDto.getId() + " CREATED");
-        return itemDto;
+        log.debug("Item created");
+        return ItemMapper.toItemDto(itemRepository.save(ItemMapper.toItem(itemDto)));
     }
 
     @Override
-    public ItemDto update(long ownerId, long id, JsonNode object) {
-        if (ownerId != storage.get(id).getOwnerId()) {
-            log.warn("PATCH REQUEST UNSUCCESSFUL - USER ID:" + ownerId + " NOT OWNER OF ITEM ID:" + id);
-            throw new ChangeOwnerAttempt("USER ID:" + ownerId + " NOT OWNER OF ITEM ID:" + id);
+    public ItemDto update(long id, long ownerId, JsonNode object) {
+        Item itemToUpdate = itemRepository.findById(id).orElseThrow(() -> {
+            log.warn("Item not found");
+            throw new NotFound("Item not found");
+        });
+        if (ownerId != itemRepository.findById(id).get().getOwnerId()) {
+            log.warn("User is not owner of item");
+            throw new NotFound("User is not owner of item");
         }
         if (object.has("name")) {
-            storage.get(id).setName(object.get("name").textValue());
-            log.debug("PATCH REQUEST SUCCESSFUL - ITEM ID:" + id + " NAME UPDATED");
+            itemToUpdate.setName(object.get("name").textValue());
+            log.debug("Item name updated");
         }
         if (object.has("description")) {
-            storage.get(id).setDescription(object.get("description").textValue());
-            log.debug("PATCH REQUEST SUCCESSFUL - ITEM ID:" + id + " DESCRIPTION UPDATED");
+            itemToUpdate.setDescription(object.get("description").textValue());
+            log.debug("Item description updated");
         }
         if (object.has("available")) {
-            storage.get(id).setAvailable(object.get("available").asBoolean());
-            log.debug("PATCH REQUEST SUCCESSFUL - ITEM ID:" + id + " AVAILABLE STATUS UPDATED");
+            itemToUpdate.setAvailable(object.get("available").asBoolean());
+            log.debug("Item status updated");
         }
-        return ItemMapper.toItemDto(storage.get(id));
+        return ItemMapper.toItemDto(itemRepository.save(itemToUpdate));
     }
 
     @Override
-    public ItemDto getItem(long ownerId, long id) {
-        if (!storage.contains(id)) {
-            log.warn("GET REQUEST UNSUCCESSFUL - ITEM ID:" + id + " NOT FOUND");
-            throw new ItemNotFound("NO ITEM ID:" + id + " FOUND");
+    public ItemDto getById(long id, long ownerId) {
+        Item itemToGet = itemRepository.findById(id).orElseThrow(() -> {
+            log.warn("Item not found");
+            return new NotFound("Item not found");
+        });
+        ItemDto itemDtoToGet = ItemMapper.toItemDto(itemToGet);
+        List<Booking> bookings = bookingRepository.findAllByItemIdInOrderByStartDesc(List.of(id));
+        if (ownerId == itemDtoToGet.getOwnerId()) {
+            if (bookings.size() > 0) {
+                itemDtoToGet.setNextBooking(BookingMapper.toBookingItemDto(bookings.get(0)));
+            }
+            if (bookings.size() > 1) {
+                itemDtoToGet.setLastBooking(BookingMapper.toBookingItemDto(bookings.get(1)));
+            }
         }
-        log.debug("GET REQUEST SUCCESSFUL - ITEM ID:" + id + " FOUND");
-        return ItemMapper.toItemDto(storage.get(id));
+        itemDtoToGet.setComments(commentRepository.findAll().stream()
+                .map(CommentMapper::toCommentDto)
+                .collect(Collectors.toList()));
+        log.debug("Item found");
+        return itemDtoToGet;
     }
 
     @Override
-    public Collection<ItemDto> getAll(long ownerId) {
-        Set<ItemDto> itemDtoSet = new TreeSet<>((item1, item2) -> (int) (item1.getId() - item2.getId()));
-        storage.getAll().stream()
-                .filter(item -> item.getOwnerId() == ownerId)
+    public List<ItemDto> getAll(long ownerId) {
+        log.debug("Items by owner found");
+        return itemRepository.findAllByOwnerId(ownerId).stream()
                 .map(ItemMapper::toItemDto)
-                .forEach(itemDtoSet::add);
-        log.debug("GET REQUEST SUCCESSFUL - " + itemDtoSet.size() + " ITEMS FOUND");
-        return itemDtoSet;
+                .map(itemDto -> getById(itemDto.getId(), itemDto.getOwnerId()))
+                .sorted((Comparator.comparingLong(ItemDto::getId)))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Collection<ItemDto> search(long ownerId, String text) {
-        Set<ItemDto> itemDtoSet = new TreeSet<>((item1, item2) -> (int) (item1.getId() - item2.getId()));
-        if (text.isEmpty()) {
-            log.debug("GET REQUEST SUCCESSFUL - ITEM SEARCH RESULT FOR QUERY " + text + " NOT FOUND");
-            return itemDtoSet;
+    public List<ItemDto> search(String text, long ownerId) {
+        if (text == null || text.isBlank()) {
+            return Collections.emptyList();
         }
-        storage.getAll().stream()
-                .filter(Item::getAvailable)
-                .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase()) || item.getDescription().toLowerCase().contains(text.toLowerCase()))
+        log.debug("Items found by search");
+        return itemRepository.search(text.toLowerCase()).stream()
                 .map(ItemMapper::toItemDto)
-                .forEach(itemDtoSet::add);
-        log.debug("GET REQUEST SUCCESSFUL - ITEM SEARCH RESULT FOR QUERY " + text + " FOUND");
-        return itemDtoSet;
+                .collect(Collectors.toList());
     }
 
+    @Override
     public void delete(long id) {
-        if (!storage.contains(id)) {
-            log.warn("DELETE REQUEST UNSUCCESSFUL - ITEM ID:" + id + " NOT FOUND");
-            throw new ItemNotFound("NO ITEM ID:" + id + " FOUND");
+        itemRepository.deleteById(id);
+        log.debug("Item deleted");
+    }
+
+    @Override
+    public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
+        List<BookingDto> bookings = bookingService.getAll(userId, "PAST");
+        List<Long> bookers = bookings.stream()
+                .map(BookingDto::getBooker)
+                .map(User::getId)
+                .collect(Collectors.toList());
+        if (bookers.size() == 0) {
+            throw new BadRequest("User have not booked the item");
         }
-        storage.delete(id);
-        log.debug("DELETE REQUEST SUCCESSFUL - ITEM ID:" + id + " DELETED");
+        Comment commentToAdd = CommentMapper.toComment(commentDto);
+        commentToAdd.setItem(itemRepository.findById(userId).orElseThrow(() -> {
+            log.warn("Item not found");
+            throw new NotFound("Item not found");
+        }));
+        commentToAdd.setAuthor(userRepository.findById(userId).orElseThrow(() -> {
+            log.warn("Author not found");
+            throw new NotFound("Author not found");
+        }));
+        commentToAdd.setCreated(LocalDateTime.now());
+        log.debug("Comment created");
+        return CommentMapper.toCommentDto(commentRepository.save(commentToAdd));
     }
 }

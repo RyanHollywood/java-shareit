@@ -9,9 +9,6 @@ import ru.practicum.shareit.user.service.UserServiceImpl;
 import javax.validation.Valid;
 import java.util.Collection;
 
-/**
- * // TODO .
- */
 @RestController
 @RequestMapping(path = "/users")
 public class UserController {
@@ -24,18 +21,18 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto createUser(@Valid @RequestBody UserDto userDto) {
+    public UserDto create(@Valid @RequestBody UserDto userDto) {
         return userService.create(userDto);
     }
 
     @PatchMapping("/{id}")
-    public UserDto updateUser(@RequestBody JsonNode object, @PathVariable long id) {
-        return userService.update(object, id);
+    public UserDto update(@RequestBody JsonNode object, @PathVariable long id) {
+        return userService.update(id, object);
     }
 
     @GetMapping("/{id}")
-    public UserDto getUser(@PathVariable long id) {
-        return userService.getUser(id);
+    public UserDto get(@PathVariable long id) {
+        return userService.getById(id);
     }
 
     @GetMapping
@@ -44,7 +41,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable long id) {
-        userService.deleteUser(id);
+    public void delete(@PathVariable long id) {
+        userService.delete(id);
     }
 }
