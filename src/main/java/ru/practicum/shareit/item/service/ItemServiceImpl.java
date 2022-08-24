@@ -39,7 +39,8 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
 
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, BookingService bookingService, BookingRepository bookingRepository, CommentRepository commentRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, BookingService bookingService,
+                           BookingRepository bookingRepository, CommentRepository commentRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingService = bookingService;

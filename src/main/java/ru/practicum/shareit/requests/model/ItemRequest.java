@@ -1,27 +1,35 @@
 package ru.practicum.shareit.requests.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-/**
- * // TODO .
- */
-
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "requests")
 public class ItemRequest {
-    @NotNull
+
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotNull
-    @NotBlank
+    @Column(name = "description")
     private String description;
 
-    @NotNull
+    @Column(name = "requestor_id")
     private long requestor;
 
-    @NotNull
+    @Column(name = "created")
     private LocalDateTime created;
 }
