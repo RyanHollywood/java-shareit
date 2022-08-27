@@ -6,6 +6,7 @@ import ru.practicum.shareit.requests.dto.ItemRequestDto;
 import ru.practicum.shareit.requests.service.ItemRequestServiceImpl;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -23,23 +24,31 @@ public class ItemRequestController {
     public ItemRequestDto create(@RequestHeader("X-Sharer-User-Id") long requestorId,
                                  @Valid @RequestBody ItemRequestDto itemRequestDto) {
         itemRequestDto.setRequestor(requestorId);
+        itemRequestDto.setCreated(LocalDateTime.now());
         return itemRequestService.create(itemRequestDto, requestorId);
 
     }
 
-    @GetMapping("/{requestId}")
-    public ItemRequestDto get(@RequestHeader("X-Sharer-User-Id") long requestorId,
-                              @PathVariable long id) {
-        return itemRequestService.getById(id, requestorId);
+    @GetMapping
+    public List<ItemRequestDto> getByRequestor(@RequestHeader("X-Sharer-User-Id") long requestorId) {
+        return itemRequestService.getByRequestor(requestorId);
     }
 
-    @GetMapping
-    public List<ItemRequestDto> getAll(@RequestHeader("X-Sharer-User-Id") long requestorId) {
+    @GetMapping("/all")
+    public List<ItemRequestDto> getAll(@RequestHeader("X-Sharer-User-Id") long requestorId ,
+                                       @RequestParam(value = "from", required = false, defaultValue = "0") int from,
+                                       @RequestParam(value = "size", required = false, defaultValue = "0") int size) {
         return itemRequestService.getAll(requestorId);
     }
 
-    @DeleteMapping("/{requestId}")
-    public void delete() {
+    @GetMapping("/{requestId}")
+    public ItemRequestDto get(@RequestHeader("X-Sharer-User-Id") long requestorId,
+                              @PathVariable long requestId) {
+        return itemRequestService.getById(requestorId, requestId);
+    }
 
+    @DeleteMapping("/{requestId}")
+    public void delete(@PathVariable long requestId) {
+        itemRequestService.delete(requestId);
     }
 }
