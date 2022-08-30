@@ -152,7 +152,7 @@ public class ItemServiceImpl implements ItemService {
         log.debug("Comment created");
         return CommentMapper.toCommentDto(commentRepository.save(commentToAdd));
     }
-    
+
     private Item getItem(long id) {
         return itemRepository.findById(id).orElseThrow(() -> {
             log.warn("Item not found");
