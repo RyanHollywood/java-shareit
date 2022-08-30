@@ -12,48 +12,48 @@ import static org.junit.jupiter.api.Assertions.*;
 class BookingTest {
 
     private Booking booking;
-    private final long ID = 1;
-    private final LocalDateTime START = LocalDateTime.now();
-    private final LocalDateTime END = LocalDateTime.now().plusHours(1);
-    private final Item ITEM = null;
-    private final User BOOKER = null;
-    private final BookingStatus DEFAULT_STATUS = BookingStatus.WAITING;
+    private final long id = 1;
+    private final LocalDateTime start = LocalDateTime.now();
+    private final LocalDateTime end = LocalDateTime.now().plusHours(1);
+    private final Item item = null;
+    private final User booker = null;
+    private final BookingStatus defaultStatus = BookingStatus.WAITING;
 
 
     @BeforeEach
     void reload() {
-        booking = new Booking(START, END, ITEM, BOOKER, DEFAULT_STATUS);
-        booking.setId(ID);
+        booking = new Booking(start, end, item, booker, defaultStatus);
+        booking.setId(id);
     }
 
     @Test
     void getId() {
-        assertEquals(ID, booking.getId());
+        assertEquals(id, booking.getId());
     }
 
     @Test
     void getStart() {
-        assertEquals(START, booking.getStart());
+        assertEquals(start, booking.getStart());
     }
 
     @Test
     void getEnd() {
-        assertEquals(END, booking.getEnd());
+        assertEquals(end, booking.getEnd());
     }
 
     @Test
     void getItem() {
-        assertEquals(ITEM, booking.getItem());
+        assertEquals(item, booking.getItem());
     }
 
     @Test
     void getBooker() {
-        assertEquals(BOOKER, booking.getBooker());
+        assertEquals(booker, booking.getBooker());
     }
 
     @Test
     void getStatus() {
-        assertEquals(DEFAULT_STATUS, booking.getStatus());
+        assertEquals(defaultStatus, booking.getStatus());
     }
 
     @Test
@@ -65,14 +65,14 @@ class BookingTest {
 
     @Test
     void setStart() {
-        LocalDateTime newStart = START.plusMinutes(30);
+        LocalDateTime newStart = start.plusMinutes(30);
         booking.setStart(newStart);
         assertEquals(newStart, booking.getStart());
     }
 
     @Test
     void setEnd() {
-        LocalDateTime newEnd = END.plusMinutes(30);
+        LocalDateTime newEnd = end.plusMinutes(30);
         booking.setEnd(newEnd);
         assertEquals(newEnd, booking.getEnd());
     }
@@ -110,8 +110,8 @@ class BookingTest {
 
     @Test
     void testEquals() {
-        Booking equalBooking = new Booking(START, END, ITEM, BOOKER, DEFAULT_STATUS);
-        equalBooking.setId(ID);
+        Booking equalBooking = new Booking(start, end, item, booker, defaultStatus);
+        equalBooking.setId(id);
         assertEquals(equalBooking, booking);
     }
 }

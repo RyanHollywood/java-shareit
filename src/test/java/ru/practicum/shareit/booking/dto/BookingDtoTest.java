@@ -2,7 +2,6 @@ package ru.practicum.shareit.booking.dto;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
@@ -14,54 +13,54 @@ import static org.junit.jupiter.api.Assertions.*;
 class BookingDtoTest {
 
     private BookingDto bookingDto;
-    private final long ID = 1;
-    private final LocalDateTime START = LocalDateTime.now();
-    private final LocalDateTime END = LocalDateTime.now().plusHours(1);
-    private final Item ITEM = null;
-    private final User BOOKER = null;
-    private final BookingStatus DEFAULT_STATUS = BookingStatus.WAITING;
+    private final long id = 1;
+    private final LocalDateTime start = LocalDateTime.now();
+    private final LocalDateTime end = LocalDateTime.now().plusHours(1);
+    private final Item item = null;
+    private final User booker = null;
+    private final BookingStatus defaultStatus = BookingStatus.WAITING;
 
 
     @BeforeEach
     void reload() {
         bookingDto = BookingDto.builder()
-                .id(ID)
-                .start(START)
-                .end(END)
-                .booker(BOOKER)
-                .item(ITEM)
-                .status(DEFAULT_STATUS)
+                .id(id)
+                .start(start)
+                .end(end)
+                .booker(booker)
+                .item(item)
+                .status(defaultStatus)
                 .build();
     }
 
     @Test
     void getId() {
-        assertEquals(ID, bookingDto.getId());
+        assertEquals(id, bookingDto.getId());
     }
 
     @Test
     void getStart() {
-        assertEquals(START, bookingDto.getStart());
+        assertEquals(start, bookingDto.getStart());
     }
 
     @Test
     void getEnd() {
-        assertEquals(END, bookingDto.getEnd());
+        assertEquals(end, bookingDto.getEnd());
     }
 
     @Test
     void getItem() {
-        assertEquals(ITEM, bookingDto.getItem());
+        assertEquals(item, bookingDto.getItem());
     }
 
     @Test
     void getBooker() {
-        assertEquals(BOOKER, bookingDto.getBooker());
+        assertEquals(booker, bookingDto.getBooker());
     }
 
     @Test
     void getStatus() {
-        assertEquals(DEFAULT_STATUS, bookingDto.getStatus());
+        assertEquals(defaultStatus, bookingDto.getStatus());
     }
 
     @Test
@@ -73,14 +72,14 @@ class BookingDtoTest {
 
     @Test
     void setStart() {
-        LocalDateTime newStart = START.plusMinutes(30);
+        LocalDateTime newStart = start.plusMinutes(30);
         bookingDto.setStart(newStart);
         assertEquals(newStart, bookingDto.getStart());
     }
 
     @Test
     void setEnd() {
-        LocalDateTime newEnd = END.plusMinutes(30);
+        LocalDateTime newEnd = end.plusMinutes(30);
         bookingDto.setEnd(newEnd);
         assertEquals(newEnd, bookingDto.getEnd());
     }
@@ -119,14 +118,14 @@ class BookingDtoTest {
     @Test
     void testEquals() {
         BookingDto equalBooking = BookingDto.builder()
-                .id(ID)
-                .start(START)
-                .end(END)
-                .booker(BOOKER)
-                .item(ITEM)
-                .status(DEFAULT_STATUS)
+                .id(id)
+                .start(start)
+                .end(end)
+                .booker(booker)
+                .item(item)
+                .status(defaultStatus)
                 .build();
-        equalBooking.setId(ID);
+        equalBooking.setId(id);
         assertEquals(equalBooking, bookingDto);
     }
 }

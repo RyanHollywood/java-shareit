@@ -16,12 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BookingMapperTest {
 
-    private final long ID = 1;
-    private final LocalDateTime START = LocalDateTime.now();
+    private final long id = 1;
+    private final LocalDateTime start = LocalDateTime.now();
     private final LocalDateTime END = LocalDateTime.now().plusHours(1);
-    private final Item ITEM = null;
-    private final User BOOKER = null;
-    private final BookingStatus DEFAULT_STATUS = BookingStatus.WAITING;
+    private final Item item = null;
+    private final User booker = null;
+    private final BookingStatus defaultStatus = BookingStatus.WAITING;
     private Booking booking;
     private BookingDto bookingDto;
     private BookingRequestDto bookingRequestDto;
@@ -29,9 +29,9 @@ class BookingMapperTest {
 
     @BeforeEach
     void reload() {
-        booking = new Booking(START, END, null, null, DEFAULT_STATUS);
-        booking.setId(ID);
-        bookingDto = new BookingDto(ID, START, END, null, null, DEFAULT_STATUS);
+        booking = new Booking(start, END, null, null, defaultStatus);
+        booking.setId(id);
+        bookingDto = new BookingDto(id, start, END, null, null, defaultStatus);
     }
 
     @Test

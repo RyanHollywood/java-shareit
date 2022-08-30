@@ -10,34 +10,34 @@ import static org.junit.jupiter.api.Assertions.*;
 class BookingRequestDtoTest {
 
     private BookingRequestDto bookingRequestDto;
-    private final long BOOKER_ID = 1;
-    private final long ITEM_ID = 1;
-    private final LocalDateTime START = LocalDateTime.now();
-    private final LocalDateTime END = LocalDateTime.now().plusHours(1);
+    private final long bookerId = 1;
+    private final long itemId = 1;
+    private final LocalDateTime start = LocalDateTime.now();
+    private final LocalDateTime end = LocalDateTime.now().plusHours(1);
 
     @BeforeEach
     void reload() {
-        bookingRequestDto = new BookingRequestDto(BOOKER_ID, ITEM_ID, START, END);
+        bookingRequestDto = new BookingRequestDto(bookerId, itemId, start, end);
     }
 
     @Test
     void getBookerId() {
-        assertEquals(BOOKER_ID, bookingRequestDto.getBookerId());
+        assertEquals(bookerId, bookingRequestDto.getBookerId());
     }
 
     @Test
     void getItemId() {
-        assertEquals(ITEM_ID, bookingRequestDto.getItemId());
+        assertEquals(itemId, bookingRequestDto.getItemId());
     }
 
     @Test
     void getStart() {
-        assertEquals(START, bookingRequestDto.getStart());
+        assertEquals(start, bookingRequestDto.getStart());
     }
 
     @Test
     void getEnd() {
-        assertEquals(END, bookingRequestDto.getEnd());
+        assertEquals(end, bookingRequestDto.getEnd());
     }
 
     @Test
@@ -56,21 +56,21 @@ class BookingRequestDtoTest {
 
     @Test
     void setStart() {
-        LocalDateTime newStart = START.plusMinutes(30);
+        LocalDateTime newStart = start.plusMinutes(30);
         bookingRequestDto.setStart(newStart);
         assertEquals(newStart, bookingRequestDto.getStart());
     }
 
     @Test
     void setEnd() {
-        LocalDateTime newEnd = END.plusMinutes(30);
+        LocalDateTime newEnd = end.plusMinutes(30);
         bookingRequestDto.setEnd(newEnd);
         assertEquals(newEnd, bookingRequestDto.getEnd());
     }
 
     @Test
     void testEquals() {
-        BookingRequestDto equalBookingRequestDto = new BookingRequestDto(BOOKER_ID, ITEM_ID, START, END);
+        BookingRequestDto equalBookingRequestDto = new BookingRequestDto(bookerId, itemId, start, end);
         assertEquals(equalBookingRequestDto, bookingRequestDto);
     }
 }

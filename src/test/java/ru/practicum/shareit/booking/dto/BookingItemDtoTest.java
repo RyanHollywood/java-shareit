@@ -8,22 +8,22 @@ import static org.junit.jupiter.api.Assertions.*;
 class BookingItemDtoTest {
 
     private BookingItemDto bookingItemDto;
-    private final long ID = 1;
-    private final long BOOKER_ID = 1;
+    private final long id = 1;
+    private final long bookerId = 1;
 
     @BeforeEach
     void reload() {
-        bookingItemDto = new BookingItemDto(ID, BOOKER_ID);
+        bookingItemDto = new BookingItemDto(id, bookerId);
     }
 
     @Test
     void getId() {
-        assertEquals(ID, bookingItemDto.getId());
+        assertEquals(id, bookingItemDto.getId());
     }
 
     @Test
     void getBookerId() {
-        assertEquals(BOOKER_ID, bookingItemDto.getBookerId());
+        assertEquals(bookerId, bookingItemDto.getBookerId());
     }
 
     @Test
@@ -42,15 +42,15 @@ class BookingItemDtoTest {
 
     @Test
     void testEquals() {
-        BookingItemDto equalBookingItemDto = new BookingItemDto(ID, BOOKER_ID);
+        BookingItemDto equalBookingItemDto = new BookingItemDto(id, bookerId);
         assertEquals(equalBookingItemDto, bookingItemDto);
     }
 
     @Test
     void builder() {
         BookingItemDto dtoByBuilder = BookingItemDto.builder()
-                .id(ID)
-                .bookerId(BOOKER_ID)
+                .id(id)
+                .bookerId(bookerId)
                 .build();
         assertEquals(dtoByBuilder, bookingItemDto);
     }
