@@ -8,6 +8,9 @@ import ru.practicum.shareit.requests.service.ItemRequestServiceImpl;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
+import static java.lang.Integer.*;
 
 @RestController
 @RequestMapping(path = "/requests")
@@ -23,28 +26,30 @@ public class ItemRequestController {
     @PostMapping
     public ItemRequestDto create(@RequestHeader("X-Sharer-User-Id") long requestorId,
                                  @Valid @RequestBody ItemRequestDto itemRequestDto) {
-        itemRequestDto.setRequestor(requestorId);
+        itemRequestDto.setRequesterId(requestorId);
         itemRequestDto.setCreated(LocalDateTime.now());
-        return itemRequestService.create(itemRequestDto, requestorId);
+        return itemRequestService.create(itemRequestDto);
 
     }
 
     @GetMapping
-    public List<ItemRequestDto> getByRequestor(@RequestHeader("X-Sharer-User-Id") long requestorId) {
-        return itemRequestService.getByRequestor(requestorId);
+    public List<ItemRequestDto> getByRequester(@RequestHeader("X-Sharer-User-Id") long requesterId) {
+        return itemRequestService.getByRequester(requesterId);
     }
 
     @GetMapping("/all")
-    public List<ItemRequestDto> getAll(@RequestHeader("X-Sharer-User-Id") long requestorId ,
-                                       @RequestParam(value = "from", required = false, defaultValue = "0") int from,
-                                       @RequestParam(value = "size", required = false, defaultValue = "0") int size) {
-        return itemRequestService.getAll(requestorId);
+    public List<ItemRequestDto> getAll(@RequestHeader("X-Sharer-User-Id") long requesterId ,
+                                       @RequestParam(value = "from", required = false) Optional<Integer> from,
+                                       @RequestParam(value = "size", required = false) Optional<Integer> size) {
+
+        return itemRequestService.getAll(requesterId, from, size);
     }
 
     @GetMapping("/{requestId}")
     public ItemRequestDto get(@RequestHeader("X-Sharer-User-Id") long requestorId,
                               @PathVariable long requestId) {
-        return itemRequestService.getById(requestorId, requestId);
+
+        return itemRequestService.getById(requestId);
     }
 
     @DeleteMapping("/{requestId}")

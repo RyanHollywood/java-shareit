@@ -40,25 +40,19 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto create(BookingRequestDto requestDto) {
-        Item itemToBook = itemRepository.findById(requestDto.getItemId()).orElseThrow(() -> {
-            log.warn("Item to book not found");
-            throw new NotFound("Item to book not found");
-        });
+        Item itemToBook = getItem(requestDto.getItemId());
         if (!itemToBook.isAvailable()) {
             log.warn("Item not available");
             throw new BadRequest("Item not available");
         }
-        User booker = userRepository.findById(requestDto.getBookerId()).orElseThrow(() -> {
-            log.warn("Booker not found");
-            throw new NotFound("Booker not found");
-        });
+        User booker = getUser(requestDto.getBookerId());
         if (itemToBook.getOwnerId() == booker.getId()) {
             log.warn("Booker and owner is same person");
             throw new NotFound("Booker and owner is same person");
         }
         if (requestDto.getStart().isBefore(LocalDateTime.now()) || requestDto.getEnd().isBefore(LocalDateTime.now())) {
-            log.warn("Start time and end time cant be in past");
-            throw new BadRequest("Start time and end time cant be in past");
+            log.warn("Start time and end time cannot be in past");
+            throw new BadRequest("Start time and end time cannot be in past");
         }
         Booking booking = BookingMapper.toBooking(requestDto);
         booking.setItem(itemToBook);
@@ -70,14 +64,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto update(long userId, long id, boolean parameter) {
-        Booking bookingToUpdate = bookingRepository.findById(id).orElseThrow(() -> {
-            log.warn("Booking not found");
-            throw new NotFound("Booking not found");
-        });
-        Item item = itemRepository.findById(bookingToUpdate.getItem().getId()).orElseThrow(() -> {
-            log.warn("Item not found");
-            throw new NotFound("Item not found");
-        });
+        Booking bookingToUpdate = getBooking(id);
+        Item item = getItem(bookingToUpdate.getItem().getId());
         if (userId != item.getOwnerId()) {
             log.warn("User is not owner");
             throw new NotFound("User is not owner");
@@ -99,14 +87,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto getById(long userId, long id) {
-        Booking booking = bookingRepository.findById(id).orElseThrow(() -> {
-            log.warn("Booking not found");
-            throw new NotFound("Booking not found");
-        });
-        Item itemToBook = itemRepository.findById(booking.getItem().getId()).orElseThrow(() -> {
-            log.warn("Item not found");
-            throw new NotFound("Item not found");
-        });
+        Booking booking = getBooking(id);
+        Item itemToBook = getItem(booking.getItem().getId());
         if (userId != itemToBook.getOwnerId()) {
             if (userId != booking.getBooker().getId()) {
                 log.warn("Booker is not owner or booker");
@@ -119,20 +101,14 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getAll(long userId, String state) {
-        User user = userRepository.findById(userId).orElseThrow(() -> {
-            log.warn("User not found");
-            throw new NotFound("User not found");
-        });
+        getUser(userId);
         log.debug("Bookings by booker found");
         return filterByState(state, bookingRepository.findByBookerIdOrderByStartDesc(userId));
     }
 
     @Override
     public List<BookingDto> getAllByOwner(long ownerId, String state) {
-        User owner = userRepository.findById(ownerId).orElseThrow(() -> {
-            log.warn("User not found");
-            throw new NotFound("User not found");
-        });
+        getUser(ownerId);
         List<Long> itemsIds = itemRepository.findAllByOwnerId(ownerId).stream()
                 .map(Item::getId)
                 .collect(Collectors.toList());
@@ -142,8 +118,30 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public void delete(long id) {
+        getBooking(id);
         bookingRepository.deleteById(id);
         log.debug("Booking deleted");
+    }
+
+    private Booking getBooking(long id) {
+        return bookingRepository.findById(id).orElseThrow(() -> {
+            log.warn("Booking not found");
+            throw new NotFound("Booking not found");
+        });
+    }
+
+    private Item getItem(long id) {
+        return itemRepository.findById(id).orElseThrow(() -> {
+            log.warn("Item not found");
+            throw new NotFound("Item not found");
+        });
+    }
+
+    private User getUser(long id) {
+        return userRepository.findById(id).orElseThrow(() -> {
+            log.warn("User not found");
+            throw new NotFound("User not found");
+        });
     }
 
     private List<BookingDto> filterByState(String state, List<Booking> bookings) {

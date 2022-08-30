@@ -15,7 +15,7 @@ class ItemRequestDtoTest {
     }
 
     @Test
-    void getRequestor() {
+    void getRequester() {
     }
 
     @Test
@@ -31,7 +31,7 @@ class ItemRequestDtoTest {
     }
 
     @Test
-    void setRequestor() {
+    void setRequester() {
     }
 
     @Test

@@ -60,11 +60,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto update(long id, long ownerId, JsonNode object) {
-        Item itemToUpdate = itemRepository.findById(id).orElseThrow(() -> {
-            log.warn("Item not found");
-            throw new NotFound("Item not found");
-        });
-        if (ownerId != itemRepository.findById(id).get().getOwnerId()) {
+        Item itemToUpdate = getItem(id);
+        if (ownerId != itemToUpdate.getOwnerId()) {
             log.warn("User is not owner of item");
             throw new NotFound("User is not owner of item");
         }
@@ -85,10 +82,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getById(long id, long ownerId) {
-        Item itemToGet = itemRepository.findById(id).orElseThrow(() -> {
-            log.warn("Item not found");
-            return new NotFound("Item not found");
-        });
+        Item itemToGet = getItem(id);
         ItemDto itemDtoToGet = ItemMapper.toItemDto(itemToGet);
         List<Booking> bookings = bookingRepository.findAllByItemIdInOrderByStartDesc(List.of(id));
         if (ownerId == itemDtoToGet.getOwnerId()) {
@@ -129,6 +123,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void delete(long id) {
+        getItem(id);
         itemRepository.deleteById(id);
         log.debug("Item deleted");
     }
@@ -155,5 +150,12 @@ public class ItemServiceImpl implements ItemService {
         commentToAdd.setCreated(LocalDateTime.now());
         log.debug("Comment created");
         return CommentMapper.toCommentDto(commentRepository.save(commentToAdd));
+    }
+    
+    private Item getItem(long id) {
+        return itemRepository.findById(id).orElseThrow(() -> {
+            log.warn("Item not found");
+            return new NotFound("Item not found");
+        });
     }
 }
