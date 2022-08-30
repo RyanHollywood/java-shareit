@@ -33,10 +33,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto update(long id, JsonNode object) {
-        User userToUpdate = repository.findById(id).orElseThrow(() -> {
-            log.warn("User not found");
-            return new NotFound("User not found");
-        });
+        User userToUpdate = getUser(id);
         if (object.has("name")) {
             userToUpdate.setName(object.get("name").textValue());
             log.debug("User name updated");
@@ -50,10 +47,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getById(long id) {
-        User userToGet = repository.findById(id).orElseThrow(() -> {
-            log.warn("User not found");
-            return new NotFound("");
-        });
+        User userToGet = getUser(id);
         log.debug("User found");
         return UserMapper.toUserDto(userToGet);
     }
@@ -69,7 +63,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(long id) {
-        log.debug("User deleted");
+        getUser(id);
         repository.deleteById(id);
+        log.debug("User deleted");
+    }
+
+    private User getUser(long id) {
+        return repository.findById(id).orElseThrow(() -> {
+            log.warn("User not found");
+            return new NotFound("User not found");
+        });
     }
 }

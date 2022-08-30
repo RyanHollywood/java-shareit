@@ -7,6 +7,7 @@ import ru.practicum.shareit.comment.dto.CommentDto;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Optional;
 
 @Data
 public class ItemDto {
@@ -27,12 +28,14 @@ public class ItemDto {
     private BookingItemDto lastBooking;
     private BookingItemDto nextBooking;
     private List<CommentDto> comments;
+    private Optional<Long> requestId;
 
-    public ItemDto(long id, String name, String description, Boolean available, long ownerId) {
+    public ItemDto(long id, String name, String description, Boolean available, long ownerId, Optional<Long> requestId) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.available = available;
         this.ownerId = ownerId;
+        this.requestId = requestId;
     }
 }

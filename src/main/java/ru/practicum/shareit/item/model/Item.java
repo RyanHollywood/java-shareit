@@ -37,4 +37,15 @@ public class Item {
 
     @Column(name = "owner_id")
     private long ownerId;
+
+    @Column(name = "request_id")
+    private long requestId;
+
+    public Item(long id, String name, String description, boolean available, long ownerId) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.available = available;
+        this.ownerId = ownerId;
+    }
 }
