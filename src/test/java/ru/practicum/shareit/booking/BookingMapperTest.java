@@ -18,7 +18,7 @@ class BookingMapperTest {
 
     private final long id = 1;
     private final LocalDateTime start = LocalDateTime.now();
-    private final LocalDateTime END = LocalDateTime.now().plusHours(1);
+    private final LocalDateTime end = LocalDateTime.now().plusHours(1);
     private final Item item = null;
     private final User booker = null;
     private final BookingStatus defaultStatus = BookingStatus.WAITING;
@@ -29,9 +29,9 @@ class BookingMapperTest {
 
     @BeforeEach
     void reload() {
-        booking = new Booking(start, END, null, null, defaultStatus);
+        booking = new Booking(start, end, null, null, defaultStatus);
         booking.setId(id);
-        bookingDto = new BookingDto(id, start, END, null, null, defaultStatus);
+        bookingDto = new BookingDto(id, start, end, null, null, defaultStatus);
     }
 
     @Test
