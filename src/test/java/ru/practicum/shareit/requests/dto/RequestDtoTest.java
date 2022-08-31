@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RequestDtoTest {
 
-    private RequestDto request;
+    private RequestDto requestDto;
     private final long id = 1;
     private final String description = "Description";
     private final long requesterId = 1;
@@ -20,55 +20,55 @@ class RequestDtoTest {
 
     @BeforeEach
     void reload() {
-        request = new RequestDto(id, description, requesterId, created, items);
+        requestDto = new RequestDto(id, description, requesterId, created, items);
     }
 
     @Test
     void getId() {
-        assertEquals(id, request.getId());
+        assertEquals(id, requestDto.getId());
     }
 
     @Test
     void getDescription() {
-        assertEquals(description, request.getDescription());
+        assertEquals(description, requestDto.getDescription());
     }
 
     @Test
     void getRequesterId() {
-        assertEquals(requesterId, request.getRequesterId());
+        assertEquals(requesterId, requestDto.getRequesterId());
     }
 
     @Test
     void getCreated() {
-        assertEquals(created, request.getCreated());
+        assertEquals(created, requestDto.getCreated());
     }
 
     @Test
     void setId() {
         long newId = 2;
-        request.setId(newId);
-        assertEquals(newId, request.getId());
+        requestDto.setId(newId);
+        assertEquals(newId, requestDto.getId());
     }
 
     @Test
     void setDescription() {
         String newDescription = "NewDescription";
-        request.setDescription(newDescription);
-        assertEquals(newDescription, request.getDescription());
+        requestDto.setDescription(newDescription);
+        assertEquals(newDescription, requestDto.getDescription());
     }
 
     @Test
     void setRequesterId() {
         long newRequesterId = 2;
-        request.setRequesterId(newRequesterId);
-        assertEquals(newRequesterId, request.getRequesterId());
+        requestDto.setRequesterId(newRequesterId);
+        assertEquals(newRequesterId, requestDto.getRequesterId());
     }
 
     @Test
     void setCreated() {
         LocalDateTime newCreated = LocalDateTime.now().plusHours(1);
-        request.setCreated(newCreated);
-        assertEquals(newCreated, request.getCreated());
+        requestDto.setCreated(newCreated);
+        assertEquals(newCreated, requestDto.getCreated());
     }
 
     @Test
@@ -80,6 +80,6 @@ class RequestDtoTest {
                 .created(created)
                 .items(items)
                 .build();
-        assertEquals(equalRequest, request);
+        assertEquals(equalRequest, requestDto);
     }
 }
