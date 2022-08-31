@@ -2,12 +2,11 @@ package ru.practicum.shareit.comment.dto;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CommentDtoTest {
 
