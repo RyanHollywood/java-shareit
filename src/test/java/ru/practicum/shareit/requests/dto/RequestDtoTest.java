@@ -3,7 +3,6 @@ package ru.practicum.shareit.requests.dto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.requests.model.Request;
 
 import java.time.LocalDateTime;
 import java.util.List;
