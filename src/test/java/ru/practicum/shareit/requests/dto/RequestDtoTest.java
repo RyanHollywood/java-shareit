@@ -74,11 +74,12 @@ class RequestDtoTest {
 
     @Test
     void testEquals() {
-        Request equalRequest = Request.builder()
+        RequestDto equalRequest = RequestDto.builder()
                 .id(id)
                 .description(description)
                 .requesterId(requesterId)
                 .created(created)
+                .items(items)
                 .build();
         assertEquals(equalRequest, request);
     }
