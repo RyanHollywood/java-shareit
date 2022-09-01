@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
@@ -17,11 +18,12 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,6 +40,7 @@ class BookingServiceImplTest {
 
     @InjectMocks
     private BookingServiceImpl bookingService;
+
     private Booking booking;
     private BookingRequestDto bookingRequestDto;
     private Item item;
@@ -53,7 +56,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void create() throws Exception {
+    void create() {
         checkItem();
         checkUser();
         when(bookingRepository.save(any()))
@@ -64,6 +67,11 @@ class BookingServiceImplTest {
 
     @Test
     void update() {
+        create();
+        checkBooking();
+        when(bookingRepository.save(any()))
+                .thenReturn(booking);
+        assertEquals(BookingStatus.APPROVED, bookingService.update(1, 1, true).getStatus());
     }
 
     @Test
@@ -75,14 +83,35 @@ class BookingServiceImplTest {
 
     @Test
     void getAll() {
+        create();
+        when(bookingRepository.findByBookerIdOrderByStartDesc(anyLong()))
+                .thenReturn(List.of(booking));
+        assertEquals(1, bookingService.getAll(1, "ALL",
+                Optional.empty(), Optional.empty()).size());
+        assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAll(1, "ALL",
+                Optional.empty(), Optional.empty()).get(0));
     }
 
     @Test
     void getAllByOwner() {
+        create();
+        checkUser();
+        when(itemRepository.findAllByOwnerId(anyLong()))
+                .thenReturn(List.of(item));
+        when(bookingRepository.findAllByItemIdInOrderByStartDesc(anyList()))
+                .thenReturn(List.of(booking));
+        assertEquals(1, bookingService.getAllByOwner(1, "ALL",
+                Optional.empty(), Optional.empty()).size());
+        assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAllByOwner(1, "ALL",
+                Optional.empty(), Optional.empty()).get(0));
     }
 
     @Test
     void delete() {
+        checkBooking();
+        bookingService.delete(1);
+        Mockito.verify(bookingRepository, times(1))
+                .deleteById(1L);
     }
 
     private void checkItem() {
