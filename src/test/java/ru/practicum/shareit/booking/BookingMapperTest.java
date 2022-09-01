@@ -12,7 +12,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BookingMapperTest {
 
@@ -29,9 +29,10 @@ class BookingMapperTest {
 
     @BeforeEach
     void reload() {
-        booking = new Booking(start, end, null, null, defaultStatus);
-        bookingDto = new BookingDto(id, start, end, null, null, defaultStatus);
+        booking = new Booking(start, end, item, booker, defaultStatus);
+        bookingDto = new BookingDto(id, start, end, item, booker, defaultStatus);
         bookingRequestDto = new BookingRequestDto(0, 0, start, end);
+        bookingItemDto = new BookingItemDto(id, id);
     }
 
     @Test
@@ -47,6 +48,11 @@ class BookingMapperTest {
 
     @Test
     void toBookingItemDto() {
-
+        booking.setId(id);
+        User booker = User.builder()
+                .id(1)
+                .build();
+        booking.setBooker(booker);
+        assertEquals(bookingItemDto, BookingMapper.toBookingItemDto(booking));
     }
 }
