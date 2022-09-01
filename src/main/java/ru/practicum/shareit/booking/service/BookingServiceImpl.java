@@ -30,8 +30,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
-    //private final BookingStatus DEFAULT_STATUS = BookingStatus.WAITING;
-    private final BookingStatus defaultStatus = BookingStatus.WAITING;
 
     @Autowired
     public BookingServiceImpl(BookingRepository bookingRepository, ItemRepository itemRepository, UserRepository userRepository) {
@@ -41,25 +39,24 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDto create(BookingRequestDto requestDto) {
-        Item itemToBook = getItem(requestDto.getItemId());
+    public BookingDto create(BookingRequestDto bookingRequestDto) {
+        Item itemToBook = getItem(bookingRequestDto.getItemId());
         if (!itemToBook.isAvailable()) {
             log.warn("Item not available");
             throw new BadRequest("Item not available");
         }
-        User booker = getUser(requestDto.getBookerId());
+        User booker = getUser(bookingRequestDto.getBookerId());
         if (itemToBook.getOwnerId() == booker.getId()) {
             log.warn("Booker and owner is same person");
             throw new NotFound("Booker and owner is same person");
         }
-        if (requestDto.getStart().isBefore(LocalDateTime.now()) || requestDto.getEnd().isBefore(LocalDateTime.now())) {
+        if (bookingRequestDto.getStart().isBefore(LocalDateTime.now()) || bookingRequestDto.getEnd().isBefore(LocalDateTime.now())) {
             log.warn("Start time and end time cannot be in past");
             throw new BadRequest("Start time and end time cannot be in past");
         }
-        Booking booking = BookingMapper.toBooking(requestDto);
+        Booking booking = BookingMapper.toBooking(bookingRequestDto);
         booking.setItem(itemToBook);
         booking.setBooker(booker);
-        booking.setStatus(defaultStatus);
         log.debug("Booking created");
         return BookingMapper.toBookingDto(bookingRepository.save(booking));
     }

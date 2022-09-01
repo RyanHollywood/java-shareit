@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.requests;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,18 +7,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class ItemControllerTest {
+class RequestControllerTest {
 
     @Test
     void create() {
     }
 
     @Test
-    void update() {
-    }
-
-    @Test
-    void get() {
+    void getByRequester() {
     }
 
     @Test
@@ -26,14 +22,10 @@ class ItemControllerTest {
     }
 
     @Test
+    void get() {
+    }
+
+    @Test
     void delete() {
-    }
-
-    @Test
-    void search() {
-    }
-
-    @Test
-    void addComment() {
     }
 }

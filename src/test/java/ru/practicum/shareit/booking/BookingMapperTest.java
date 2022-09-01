@@ -30,20 +30,23 @@ class BookingMapperTest {
     @BeforeEach
     void reload() {
         booking = new Booking(start, end, null, null, defaultStatus);
-        booking.setId(id);
         bookingDto = new BookingDto(id, start, end, null, null, defaultStatus);
+        bookingRequestDto = new BookingRequestDto(0, 0, start, end);
     }
 
     @Test
     void toBookingDto() {
+        booking.setId(id);
         assertEquals(bookingDto, BookingMapper.toBookingDto(booking));
     }
 
     @Test
     void toBooking() {
+        assertEquals(booking, BookingMapper.toBooking(bookingRequestDto));
     }
 
     @Test
     void toBookingItemDto() {
+
     }
 }

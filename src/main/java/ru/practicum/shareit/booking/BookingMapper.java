@@ -4,8 +4,12 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingItemDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
 
 public class BookingMapper {
+
+    private static final BookingStatus defaultStatus = BookingStatus.WAITING;
+
     public static BookingDto toBookingDto(Booking booking) {
         return BookingDto.builder()
                 .id(booking.getId())
@@ -23,7 +27,7 @@ public class BookingMapper {
                 requestDto.getEnd(),
                 null,
                 null,
-                null
+                defaultStatus
         );
     }
 
