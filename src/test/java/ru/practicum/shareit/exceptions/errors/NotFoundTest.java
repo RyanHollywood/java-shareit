@@ -1,7 +1,22 @@
 package ru.practicum.shareit.exceptions.errors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class NotFoundTest {
+    private NotFound notFound;
+    private String message;
 
+    @BeforeEach
+    void setup() {
+        message = "Not found";
+        notFound = new NotFound(message);
+    }
+
+    @Test
+    void constructorTest() {
+        assertEquals(message, notFound.getMessage());
+    }
 }
