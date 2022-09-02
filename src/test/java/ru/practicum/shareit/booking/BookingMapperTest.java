@@ -28,7 +28,7 @@ class BookingMapperTest {
     private BookingItemDto bookingItemDto;
 
     @BeforeEach
-    void reload() {
+    void setup() {
         booking = new Booking(start, end, item, booker, defaultStatus);
         bookingDto = new BookingDto(id, start, end, item, booker, defaultStatus);
         bookingRequestDto = new BookingRequestDto(0, 0, start, end);

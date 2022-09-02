@@ -12,7 +12,7 @@ class BookingItemDtoTest {
     private final long bookerId = 1;
 
     @BeforeEach
-    void reload() {
+    void setup() {
         bookingItemDto = new BookingItemDto(id, bookerId);
     }
 

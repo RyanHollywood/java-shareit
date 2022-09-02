@@ -23,7 +23,7 @@ class BookingControllerTest {
     MockMvc mockMvc;
 
     @BeforeEach
-    void reload() {
+    void setup() {
 
     }
 

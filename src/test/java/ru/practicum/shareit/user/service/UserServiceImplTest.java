@@ -32,7 +32,7 @@ class UserServiceImplTest {
     private User user;
 
     @BeforeEach
-    void reload() {
+    void setup() {
         user = new User(2, "User", "Email@email.com");
     }
 

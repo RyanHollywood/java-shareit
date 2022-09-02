@@ -27,7 +27,7 @@ class ItemMapperTest {
     private Optional<Long> requestId = Optional.of(1L);
 
     @BeforeEach
-    void reload() {
+    void setup() {
         item = new Item(id, name, description, available, ownerId, requestId.get());
         itemDto = new ItemDto(id, name, description, available, ownerId, requestId);
     }

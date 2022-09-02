@@ -13,7 +13,7 @@ class UserDtoTest {
     private final String email = "Email@email.com";
 
     @BeforeEach
-    void reload() {
+    void setup() {
         userDto = new UserDto(id, name, email);
     }
 

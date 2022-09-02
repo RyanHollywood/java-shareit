@@ -16,7 +16,7 @@ class UserMapperTest {
     private final String email = "Email@email.com";
 
     @BeforeEach
-    void reload() {
+    void setup() {
         user = new User(id, name, email);
         userDto = new UserDto(id, name, email);
     }

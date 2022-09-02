@@ -16,7 +16,7 @@ class BookingRequestDtoTest {
     private final LocalDateTime end = LocalDateTime.now().plusHours(1);
 
     @BeforeEach
-    void reload() {
+    void setup() {
         bookingRequestDto = new BookingRequestDto(bookerId, itemId, start, end);
     }
 

@@ -43,7 +43,7 @@ class RequestServiceImplTest {
     private Request request;
 
     @BeforeEach
-    void reload() {
+    void setup() {
         request = new Request(1, "Description", 1, LocalDateTime.now());
     }
 

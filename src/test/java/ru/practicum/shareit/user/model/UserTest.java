@@ -13,7 +13,7 @@ class UserTest {
     private final String email = "Email@email.com";
 
     @BeforeEach
-    void reload() {
+    void setup() {
         user = new User(id, name, email);
     }
 

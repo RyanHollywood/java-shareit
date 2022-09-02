@@ -24,7 +24,7 @@ class ItemDtoTest {
     private Optional<Long> requestId = Optional.empty();
 
     @BeforeEach
-    void reload() {
+    void setup() {
         itemDto = new ItemDto(id, name, description, available, ownerId, requestId);
     }
 

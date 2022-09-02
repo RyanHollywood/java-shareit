@@ -16,7 +16,7 @@ class RequestTest {
     private final LocalDateTime created = LocalDateTime.now();
 
     @BeforeEach
-    void reload() {
+    void setup() {
         request = new Request(id, description, requesterId, created);
     }
 
