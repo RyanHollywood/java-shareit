@@ -53,6 +53,7 @@ class ItemServiceImplTest {
 
     @InjectMocks
     private ItemServiceImpl itemService;
+
     private User user;
     private ItemDto itemDto;
     private Item item;
@@ -110,6 +111,7 @@ class ItemServiceImplTest {
         itemToCheck.setNextBooking(BookingMapper.toBookingItemDto(nextBooking));
         itemToCheck.setLastBooking(BookingMapper.toBookingItemDto(lastBooking));
         itemToCheck.setComments(List.of(CommentMapper.toCommentDto(comment)));
+        assertEquals(1, itemService.getAll(1).size());
         assertEquals(itemToCheck, itemService.getAll(1).get(0));
     }
 

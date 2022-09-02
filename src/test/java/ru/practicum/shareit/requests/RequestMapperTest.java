@@ -28,12 +28,12 @@ class RequestMapperTest {
     }
 
     @Test
-    void toItemRequestDto() {
-        assertEquals(requestDto, RequestMapper.toItemRequestDto(request));
+    void toRequestDto() {
+        assertEquals(requestDto, RequestMapper.toRequestDto(request));
     }
 
     @Test
-    void toItemRequest() {
-        assertEquals(request, RequestMapper.toItemRequest(requestDto));
+    void toRequest() {
+        assertEquals(request, RequestMapper.toRequest(requestDto));
     }
 }
