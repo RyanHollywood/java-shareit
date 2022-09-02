@@ -111,7 +111,7 @@ class BookingServiceImplTest {
         checkBooking();
         bookingService.delete(1);
         Mockito.verify(bookingRepository, times(1))
-                .deleteById(1L);
+                .deleteById(anyLong());
     }
 
     private void checkItem() {
