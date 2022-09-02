@@ -22,7 +22,9 @@ import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -148,7 +150,7 @@ public class ItemServiceImpl implements ItemService {
             log.warn("Author not found");
             throw new NotFound("Author not found");
         }));
-        commentToAdd.setCreated(LocalDateTime.now());
+        commentToAdd.setCreated(LocalDateTime.of(LocalDate.now(), LocalTime.of(LocalTime.now().getHour(), LocalTime.now().getMinute())));
         log.debug("Comment created");
         return CommentMapper.toCommentDto(commentRepository.save(commentToAdd));
     }

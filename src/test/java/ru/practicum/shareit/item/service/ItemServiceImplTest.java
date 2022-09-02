@@ -22,7 +22,9 @@ import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,7 +83,7 @@ class ItemServiceImplTest {
                 item, user, BookingStatus.WAITING);
         Booking lastBooking = new Booking(LocalDateTime.now().plusMinutes(5),
                 LocalDateTime.now().plusMinutes(5), item, user, BookingStatus.WAITING);
-        Comment comment = new Comment(1, "Comment", item, user, LocalDateTime.now());
+        Comment comment = new Comment(1, "Comment", item, user,  LocalDateTime.of(LocalDate.now(), LocalTime.of(LocalTime.now().getHour(), LocalTime.now().getMinute())));
         checkItem();
         when(bookingRepository.findAllByItemIdInOrderByStartDesc(any()))
                 .thenReturn(List.of(nextBooking, lastBooking));
@@ -100,7 +102,7 @@ class ItemServiceImplTest {
                 item, user, BookingStatus.WAITING);
         Booking lastBooking = new Booking(LocalDateTime.now().plusMinutes(5),
                 LocalDateTime.now().plusMinutes(5), item, user, BookingStatus.WAITING);
-        Comment comment = new Comment(1, "Comment", item, user, LocalDateTime.now());
+        Comment comment = new Comment(1, "Comment", item, user, LocalDateTime.of(LocalDate.now(), LocalTime.of(LocalTime.now().getHour(), LocalTime.now().getMinute())));
         getById();
         when(itemRepository.findAllByOwnerId(anyLong()))
                 .thenReturn(List.of(item));
