@@ -6,10 +6,6 @@ import lombok.NonNull;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-/**
- * // TODO .
- */
-
 @Data
 public class Booking {
     @NotNull
