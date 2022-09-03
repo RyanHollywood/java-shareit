@@ -1,5 +1,8 @@
 package ru.practicum.shareit.item.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +18,7 @@ import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.comment.CommentMapper;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.storage.CommentRepository;
+import ru.practicum.shareit.exceptions.errors.NotFound;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
@@ -54,6 +58,7 @@ class ItemServiceImplTest {
     @InjectMocks
     private ItemServiceImpl itemService;
 
+    private final ObjectMapper mapper = new ObjectMapper();
     private User user;
     private ItemDto itemDto;
     private Item item;
@@ -68,14 +73,29 @@ class ItemServiceImplTest {
 
     @Test
     void create() {
-        checkUser();
+        checkUserOk();
         when(itemRepository.save(any()))
                 .thenReturn(item);
         assertEquals(ItemMapper.toItemDto(item), itemService.create(itemDto, 1));
+
+        checkUserNotExist();
+        try {
+            itemService.create(itemDto, 1);
+        } catch (NotFound exception) {
+            assertEquals("Owner not exists", exception.getMessage());
+        }
     }
 
     @Test
-    void update() {
+    void update() throws JsonProcessingException {
+        checkItemOk();
+        when(itemRepository.save(any()))
+                .thenReturn(item);
+        item.setName("NewName");
+        item.setDescription("NewDescription");
+        item.setAvailable(false);
+        JsonNode updateParameters = mapper.readTree("{\"name\":\"NewName\", \"description\": \"NewDescription\", \"available\":false}");
+        assertEquals(ItemMapper.toItemDto(item), itemService.update(1, 1, updateParameters));
     }
 
     @Test
@@ -85,7 +105,7 @@ class ItemServiceImplTest {
         Booking lastBooking = new Booking(LocalDateTime.now().plusMinutes(5),
                 LocalDateTime.now().plusMinutes(5), item, user, BookingStatus.WAITING);
         Comment comment = new Comment(1, "Comment", item, user,  LocalDateTime.of(LocalDate.now(), LocalTime.of(LocalTime.now().getHour(), LocalTime.now().getMinute())));
-        checkItem();
+        checkItemOk();
         when(bookingRepository.findAllByItemIdInOrderByStartDesc(any()))
                 .thenReturn(List.of(nextBooking, lastBooking));
         when(commentRepository.findAll())
@@ -124,7 +144,7 @@ class ItemServiceImplTest {
 
     @Test
     void delete() {
-        checkItem();
+        checkItemOk();
         itemService.delete(1);
         Mockito.verify(itemRepository, times(1))
                 .deleteById(anyLong());
@@ -134,13 +154,23 @@ class ItemServiceImplTest {
     void addComment() {
     }
 
-    private void checkItem() {
+    private void checkItemOk() {
         when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
     }
 
-    private void checkUser() {
+    private void checkItemNotExist() {
+        when(itemRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+    }
+
+    private void checkUserOk() {
         when(userRepository.existsById(anyLong()))
                 .thenReturn(true);
+    }
+
+    private void checkUserNotExist() {
+        when(userRepository.existsById(anyLong()))
+                .thenReturn(false);
     }
 }

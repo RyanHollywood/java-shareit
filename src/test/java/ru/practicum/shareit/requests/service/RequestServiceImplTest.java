@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.practicum.shareit.exceptions.errors.NotFound;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.requests.RequestMapper;
 import ru.practicum.shareit.requests.dto.RequestDto;
@@ -49,15 +50,22 @@ class RequestServiceImplTest {
 
     @Test
     void create() {
-        checkUser();
+        checkUserOk();
         when(requestRepository.save(any()))
                 .thenReturn(request);
         assertEquals(RequestMapper.toRequestDto(request), requestService.create(RequestMapper.toRequestDto(request)));
+
+        checkUserNotExist();
+        try {
+            requestService.create(RequestMapper.toRequestDto(request));
+        } catch (NotFound exception) {
+            assertEquals("Requester not exists", exception.getMessage());
+        }
     }
 
     @Test
     void getByRequester() {
-        checkUser();
+        checkUserOk();
         when(requestRepository.findAllByRequesterId(anyLong()))
                 .thenReturn(List.of(request));
         RequestDto requestDtoToCheck = RequestMapper.toRequestDto(request);
@@ -68,7 +76,7 @@ class RequestServiceImplTest {
 
     @Test
     void getAll() {
-        checkUser();
+        checkUserOk();
         when(requestRepository.findAll())
                 .thenReturn(List.of(request));
         RequestDto requestDtoToCheck = RequestMapper.toRequestDto(request);
@@ -80,8 +88,8 @@ class RequestServiceImplTest {
 
     @Test
     void getById() {
-        checkUser();
-        checkRequest();
+        checkUserOk();
+        checkRequestOk();
         when(itemRepository.findAllByRequestId(anyLong()))
                 .thenReturn(Collections.emptyList());
         RequestDto requestDtoToCheck = RequestMapper.toRequestDto(request);
@@ -91,18 +99,23 @@ class RequestServiceImplTest {
 
     @Test
     void delete() {
-        checkRequest();
+        checkRequestOk();
         requestService.delete(1);
         Mockito.verify(requestRepository, times(1))
                 .deleteById(anyLong());
     }
 
-    private void checkUser() {
+    private void checkUserOk() {
         when(userRepository.existsById(anyLong()))
                 .thenReturn(true);
     }
 
-    private void checkRequest() {
+    private void checkUserNotExist() {
+        when(userRepository.existsById(anyLong()))
+                .thenReturn(false);
+    }
+
+    private void checkRequestOk() {
         when(requestRepository.findById(anyLong()))
                 .thenReturn(Optional.of(request));
     }

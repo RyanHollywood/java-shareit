@@ -68,7 +68,7 @@ class RequestControllerTest {
     }
 
     @Test
-    void getAll() throws Exception {
+    void getAllWithoutPaging() throws Exception {
         when(requestService.getAll(anyLong(), any(), any()))
                 .thenReturn(List.of(requestDto));
         mockMvc.perform(get("/requests/all")
@@ -76,6 +76,19 @@ class RequestControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void getAllWithPaging() throws Exception {
+        when(requestService.getAll(anyLong(), any(), any()))
+                .thenReturn(List.of(requestDto));
+        mockMvc.perform(get("/requests/all")
+                        .param("from", String.valueOf(0))
+                        .param("size", String.valueOf(1))
+                        .header("X-Sharer-User-Id", 2)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
 
     @Test
     void getById() {
