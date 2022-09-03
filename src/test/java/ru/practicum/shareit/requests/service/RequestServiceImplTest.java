@@ -7,6 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.exceptions.errors.NotFound;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.requests.RequestMapper;
@@ -82,7 +84,7 @@ class RequestServiceImplTest {
     }
 
     @Test
-    void getAll() {
+    void getAllWithoutPaging() {
         checkUserOk();
         when(requestRepository.findAll())
                 .thenReturn(List.of(request));
@@ -90,8 +92,17 @@ class RequestServiceImplTest {
         requestDtoToCheck.setItems(Collections.emptyList());
         assertEquals(1, requestService.getAll(1, Optional.empty(), Optional.empty()).size());
         assertEquals(List.of(requestDtoToCheck), requestService.getAll(1, Optional.empty(), Optional.empty()));
+    }
 
-
+    @Test
+    void getAllWithPaging() {
+        checkUserOk();
+        when(requestRepository.findAll((Pageable) any()))
+                .thenReturn(new PageImpl<>(List.of(request)));
+        RequestDto requestDtoToCheck = RequestMapper.toRequestDto(request);
+        requestDtoToCheck.setItems(Collections.emptyList());
+        assertEquals(1, requestService.getAll(2, Optional.of(0), Optional.of(1)).size());
+        assertEquals(List.of(requestDtoToCheck), requestService.getAll(2, Optional.of(0), Optional.of(1)));
     }
 
     @Test

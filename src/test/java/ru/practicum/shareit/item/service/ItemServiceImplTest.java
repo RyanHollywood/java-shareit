@@ -66,6 +66,8 @@ class ItemServiceImplTest {
     private ItemDto itemDto;
     private Item item;
     private BookingDto bookingDto;
+    private Comment comment;
+    private CommentDto commentDto;
 
     @BeforeEach
     void setUp() {
@@ -73,6 +75,8 @@ class ItemServiceImplTest {
         itemDto = new ItemDto(1, "Item", "ItemDescription", true, 1, Optional.of(1L));
         item = new Item(1, "Item", "ItemDescription", true, 1, 1);
         bookingDto = new BookingDto(1, LocalDateTime.now(), LocalDateTime.now().plusMinutes(30), item, user, BookingStatus.WAITING);
+        comment = new Comment(1, "Text", item, user, LocalDateTime.now());
+        commentDto = CommentMapper.toCommentDto(comment);
     }
 
     @Test
@@ -100,6 +104,12 @@ class ItemServiceImplTest {
         item.setAvailable(false);
         JsonNode updateParameters = mapper.readTree("{\"name\":\"NewName\", \"description\": \"NewDescription\", \"available\":false}");
         assertEquals(ItemMapper.toItemDto(item), itemService.update(1, 1, updateParameters));
+
+        try {
+            itemService.update(1, 2, updateParameters);
+        } catch (NotFound exception) {
+            assertEquals("User is not owner of item", exception.getMessage());
+        }
     }
 
     @Test
@@ -147,6 +157,11 @@ class ItemServiceImplTest {
     }
 
     @Test
+    void emptySearch() {
+        assertEquals(0, itemService.search("", 1).size());
+    }
+
+    @Test
     void delete() {
         checkItemOk();
         itemService.delete(1);
@@ -157,12 +172,9 @@ class ItemServiceImplTest {
     @Test
     void addComment() {
         checkItemOk();
+        checkForBookingOk();
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
-        when(bookingService.getAll(anyLong(), anyString(), any(), any()))
-                .thenReturn(List.of(bookingDto));
-        Comment comment = new Comment(1, "Text", item, user, LocalDateTime.now());
-        CommentDto commentDto = CommentMapper.toCommentDto(comment);
         when(commentRepository.save(any()))
                 .thenReturn(comment);
         assertEquals(commentDto, itemService.addComment(1, 1, commentDto));
@@ -173,6 +185,39 @@ class ItemServiceImplTest {
             itemService.addComment(1, 1, commentDto);
         } catch (BadRequest exception) {
             assertEquals("User have not booked the item", exception.getMessage());
+        }
+    }
+
+    @Test
+    void addCommentWithNoBooking() {
+        when(bookingService.getAll(anyLong(), anyString(), any(), any()))
+                .thenReturn(List.of());
+        try {
+            itemService.addComment(1, 1, commentDto);
+        } catch (BadRequest exception) {
+            assertEquals("User have not booked the item", exception.getMessage());
+        }
+    }
+
+    @Test
+    void addCommentWithNoItem() {
+        checkItemNotExist();
+        checkForBookingOk();
+        try {
+            itemService.addComment(1, 1, commentDto);
+        } catch (NotFound exception) {
+            assertEquals("Item not found", exception.getMessage());
+        }
+    }
+
+    @Test
+    void addCommentWithNoUser() {
+        checkItemOk();
+        checkForBookingOk();
+        try {
+            itemService.addComment(1, 1, commentDto);
+        } catch (NotFound exception) {
+            assertEquals("Author not found", exception.getMessage());
         }
     }
 
@@ -194,5 +239,10 @@ class ItemServiceImplTest {
     private void checkUserNotExist() {
         when(userRepository.existsById(anyLong()))
                 .thenReturn(false);
+    }
+
+    private void checkForBookingOk() {
+        when(bookingService.getAll(anyLong(), anyString(), any(), any()))
+                .thenReturn(List.of(bookingDto));
     }
 }

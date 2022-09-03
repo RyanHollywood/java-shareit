@@ -12,6 +12,8 @@ import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.storage.BookingRepository;
+import ru.practicum.shareit.exceptions.errors.BadRequest;
+import ru.practicum.shareit.exceptions.errors.InternalServerError;
 import ru.practicum.shareit.exceptions.errors.NotFound;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
@@ -46,13 +48,15 @@ class BookingServiceImplTest {
     private BookingRequestDto bookingRequestDto;
     private Item item;
     private User user;
+    private final LocalDateTime start = LocalDateTime.now().plusMinutes(30);
+    private final LocalDateTime end = LocalDateTime.now().plusHours(1);
 
     @BeforeEach
-    void setUpd() {
-        bookingRequestDto = new BookingRequestDto(1, 1, LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusHours(1));
+    void setUp() {
+        bookingRequestDto = new BookingRequestDto(1, 1, start, end);
         item = new Item(1, "Item", "ItemDescription", true, 1, 1);
         user = new User(2, "User", "Email@email.com");
-        booking = new Booking(LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusHours(1), item, user, BookingStatus.WAITING);
+        booking = new Booking(start, end, item, user, BookingStatus.WAITING);
         booking.setId(1);
     }
 
@@ -63,7 +67,45 @@ class BookingServiceImplTest {
         when(bookingRepository.save(any()))
                 .thenReturn(booking);
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.create(bookingRequestDto));
+    }
 
+    @Test
+    void createWithItemNotAvailable() {
+        item.setAvailable(false);
+        checkItemOk();
+        try {
+            bookingService.create(bookingRequestDto);
+        } catch (BadRequest exception) {
+            assertEquals("Item not available", exception.getMessage());
+        }
+    }
+
+    @Test
+    void createWithBookerSamePerson() {
+        user.setId(1);
+        item.setAvailable(true);
+        checkUserOk();
+        checkItemOk();
+        checkItemOk();
+        try {
+            bookingService.create(bookingRequestDto);
+        } catch (NotFound exception) {
+            assertEquals("Booker and owner is same person", exception.getMessage());
+        }
+        user.setId(2);
+    }
+
+    @Test
+    void createInPast() {
+        checkItemOk();
+        checkUserOk();
+        bookingRequestDto.setStart(start.minusHours(2));
+        bookingRequestDto.setEnd(end.minusHours(1));
+        try {
+            bookingService.create(bookingRequestDto);
+        } catch (BadRequest exception) {
+            assertEquals("Start time and end time cannot be in past", exception.getMessage());
+        }
     }
 
     @Test
@@ -73,6 +115,12 @@ class BookingServiceImplTest {
         when(bookingRepository.save(any()))
                 .thenReturn(booking);
         assertEquals(BookingStatus.APPROVED, bookingService.update(1, 1, true).getStatus());
+
+        create();
+        checkBookingOk();
+        when(bookingRepository.save(any()))
+                .thenReturn(booking);
+        assertEquals(BookingStatus.REJECTED, bookingService.update(1, 1, false).getStatus());
     }
 
     @Test
@@ -142,6 +190,13 @@ class BookingServiceImplTest {
                 Optional.empty(), Optional.empty()).size());
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAll(1, "FUTURE",
                 Optional.empty(), Optional.empty()).get(0));
+
+        String unknownState = "SOMESTATE";
+        try {
+            bookingService.getAll(1, unknownState, Optional.empty(), Optional.empty());
+        } catch (InternalServerError exception) {
+            assertEquals("Unknown state: " + unknownState, exception.getMessage());
+        }
     }
 
     @Test
