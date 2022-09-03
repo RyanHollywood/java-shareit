@@ -74,7 +74,13 @@ class BookingControllerTest {
     }
 
     @Test
-    void getById() {
+    void getById() throws Exception {
+        when(bookingService.getById(anyLong(), anyLong()))
+                .thenReturn(null);
+        mockMvc.perform(get("/bookings/1")
+                        .header("X-Sharer-User-Id", 1)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -96,6 +102,12 @@ class BookingControllerTest {
     }
 
     @Test
-    void getAllByOwner() {
+    void getAllByOwner() throws Exception {
+        when(bookingService.getAllByOwner(anyLong(), anyString(), any(), any()))
+                .thenReturn(null);
+        mockMvc.perform(get("/bookings/owner")
+                        .header("X-Sharer-User-Id", 1)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 }
