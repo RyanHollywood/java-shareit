@@ -24,7 +24,7 @@ public class ItemDto {
     private String description;
 
     @NotNull
-    private boolean available;
+    private Boolean available;
 
     private long ownerId;
     private BookingItemDto lastBooking;

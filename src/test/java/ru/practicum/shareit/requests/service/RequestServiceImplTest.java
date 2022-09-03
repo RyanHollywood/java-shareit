@@ -91,6 +91,7 @@ class RequestServiceImplTest {
         assertEquals(1, requestService.getAll(1, Optional.empty(), Optional.empty()).size());
         assertEquals(List.of(requestDtoToCheck), requestService.getAll(1, Optional.empty(), Optional.empty()));
 
+
     }
 
     @Test

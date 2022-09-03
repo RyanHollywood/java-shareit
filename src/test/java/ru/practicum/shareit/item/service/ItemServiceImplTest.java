@@ -11,13 +11,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.booking.BookingMapper;
+import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.comment.CommentMapper;
+import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.storage.CommentRepository;
+import ru.practicum.shareit.exceptions.errors.BadRequest;
 import ru.practicum.shareit.exceptions.errors.NotFound;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -62,13 +65,14 @@ class ItemServiceImplTest {
     private User user;
     private ItemDto itemDto;
     private Item item;
+    private BookingDto bookingDto;
 
     @BeforeEach
     void setUp() {
         user = new User(2, "User", "Email@email.com");
         itemDto = new ItemDto(1, "Item", "ItemDescription", true, 1, Optional.of(1L));
         item = new Item(1, "Item", "ItemDescription", true, 1, 1);
-
+        bookingDto = new BookingDto(1, LocalDateTime.now(), LocalDateTime.now().plusMinutes(30), item, user, BookingStatus.WAITING);
     }
 
     @Test
@@ -104,7 +108,7 @@ class ItemServiceImplTest {
                 item, user, BookingStatus.WAITING);
         Booking lastBooking = new Booking(LocalDateTime.now().plusMinutes(5),
                 LocalDateTime.now().plusMinutes(5), item, user, BookingStatus.WAITING);
-        Comment comment = new Comment(1, "Comment", item, user,  LocalDateTime.of(LocalDate.now(), LocalTime.of(LocalTime.now().getHour(), LocalTime.now().getMinute())));
+        Comment comment = new Comment(1, "Comment", item, user, LocalDateTime.of(LocalDate.now(), LocalTime.of(LocalTime.now().getHour(), LocalTime.now().getMinute())));
         checkItemOk();
         when(bookingRepository.findAllByItemIdInOrderByStartDesc(any()))
                 .thenReturn(List.of(nextBooking, lastBooking));
@@ -152,6 +156,24 @@ class ItemServiceImplTest {
 
     @Test
     void addComment() {
+        checkItemOk();
+        when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(user));
+        when(bookingService.getAll(anyLong(), anyString(), any(), any()))
+                .thenReturn(List.of(bookingDto));
+        Comment comment = new Comment(1, "Text", item, user, LocalDateTime.now());
+        CommentDto commentDto = CommentMapper.toCommentDto(comment);
+        when(commentRepository.save(any()))
+                .thenReturn(comment);
+        assertEquals(commentDto, itemService.addComment(1, 1, commentDto));
+
+        when(bookingService.getAll(anyLong(), anyString(), any(), any()))
+                .thenReturn(List.of());
+        try {
+            itemService.addComment(1, 1, commentDto);
+        } catch (BadRequest exception) {
+            assertEquals("User have not booked the item", exception.getMessage());
+        }
     }
 
     private void checkItemOk() {

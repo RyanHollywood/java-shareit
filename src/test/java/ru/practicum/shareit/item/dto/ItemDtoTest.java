@@ -46,7 +46,7 @@ class ItemDtoTest {
 
     @Test
     void isAvailable() {
-        assertEquals(available, itemDto.isAvailable());
+        assertEquals(available, itemDto.getAvailable());
     }
 
     @Test
@@ -84,7 +84,7 @@ class ItemDtoTest {
     void setAvailable() {
         boolean newAvailable = false;
         itemDto.setAvailable(newAvailable);
-        assertEquals(newAvailable, itemDto.isAvailable());
+        assertEquals(newAvailable, itemDto.getAvailable());
     }
 
     @Test

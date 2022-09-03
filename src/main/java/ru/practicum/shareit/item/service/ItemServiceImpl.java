@@ -142,7 +142,7 @@ public class ItemServiceImpl implements ItemService {
             throw new BadRequest("User have not booked the item");
         }
         Comment commentToAdd = CommentMapper.toComment(commentDto);
-        commentToAdd.setItem(itemRepository.findById(userId).orElseThrow(() -> {
+        commentToAdd.setItem(itemRepository.findById(itemId).orElseThrow(() -> {
             log.warn("Item not found");
             throw new NotFound("Item not found");
         }));

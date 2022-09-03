@@ -17,12 +17,12 @@ public class ItemMapper {
     }
 
     public static Item toItem(ItemDto itemDto) {
-        if (itemDto.getRequestId().isPresent()) {
+        if (Optional.ofNullable(itemDto.getRequestId()).isPresent()) {
             return Item.builder()
                     .id(itemDto.getId())
                     .name(itemDto.getName())
                     .description(itemDto.getDescription())
-                    .available(itemDto.isAvailable())
+                    .available(itemDto.getAvailable())
                     .ownerId(itemDto.getOwnerId())
                     .requestId(itemDto.getRequestId().get())
                     .build();
@@ -31,7 +31,7 @@ public class ItemMapper {
                 .id(itemDto.getId())
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
-                .available(itemDto.isAvailable())
+                .available(itemDto.getAvailable())
                 .ownerId(itemDto.getOwnerId())
                 .build();
     }
