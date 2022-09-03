@@ -1,6 +1,8 @@
 package ru.practicum.shareit.booking;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +22,7 @@ import ru.practicum.shareit.booking.service.BookingServiceImpl;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
@@ -117,23 +120,29 @@ class BookingControllerTest {
     @Test
     void getAllWithoutPaging() throws Exception {
         when(bookingService.getAll(anyLong(), anyString(), any(), any()))
-                .thenReturn(null);
+                .thenReturn(List.of(bookingDto));
+        JSONArray bookings = new JSONArray();
+        bookings.put(new JSONObject(mapper.writeValueAsString(bookingDto)));
         mockMvc.perform(get("/bookings")
                         .header("X-Sharer-User-Id", 2)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().json(String.valueOf(bookings)));
     }
 
     @Test
     void getAllWithPaging() throws Exception {
         when(bookingService.getAll(anyLong(), anyString(), any(), any()))
-                .thenReturn(null);
+                .thenReturn(List.of(bookingDto));
+        JSONArray bookings = new JSONArray();
+        bookings.put(new JSONObject(mapper.writeValueAsString(bookingDto)));
         mockMvc.perform(get("/bookings")
                         .header("X-Sharer-User-Id", 2)
                         .param("from", "0")
                         .param("size", "1")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().json(String.valueOf(bookings)));
     }
 
     @Test
@@ -147,22 +156,30 @@ class BookingControllerTest {
     @Test
     void getAllByOwnerWithoutPaging() throws Exception {
         when(bookingService.getAllByOwner(anyLong(), anyString(), any(), any()))
-                .thenReturn(null);
+                .thenReturn(List.of(bookingDto));
+        JSONArray bookings = new JSONArray();
+        bookings.put(new JSONObject(mapper.writeValueAsString(bookingDto)));
         mockMvc.perform(get("/bookings/owner")
                         .header("X-Sharer-User-Id", 1)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().json(String.valueOf(bookings)));
+        ;
     }
 
     @Test
     void getAllByOwnerWithPaging() throws Exception {
         when(bookingService.getAllByOwner(anyLong(), anyString(), any(), any()))
-                .thenReturn(null);
+                .thenReturn(List.of(bookingDto));
+        JSONArray bookings = new JSONArray();
+        bookings.put(new JSONObject(mapper.writeValueAsString(bookingDto)));
         mockMvc.perform(get("/bookings/owner")
                         .header("X-Sharer-User-Id", 1)
                         .param("from", "0")
                         .param("size", "1")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().json(String.valueOf(bookings)));
+        ;
     }
 }
