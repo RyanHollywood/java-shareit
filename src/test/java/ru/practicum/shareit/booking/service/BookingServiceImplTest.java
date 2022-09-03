@@ -305,6 +305,15 @@ class BookingServiceImplTest {
     }
 
     @Test
+    void getAllByOwnerWrongOwner() {
+        try {
+            bookingService.getAllByOwner(1, "ALL", Optional.of(0), Optional.of(1));
+        } catch (NotFound exception) {
+            assertEquals("User not found", exception.getMessage());
+        }
+    }
+
+    @Test
     void delete() {
         checkBookingOk();
         bookingService.delete(1);

@@ -132,6 +132,15 @@ class ItemServiceImplTest {
     }
 
     @Test
+    void getByIdWrongId() {
+        try {
+            itemService.getById(2, 1);
+        } catch (NotFound exception) {
+            assertEquals("Item not found", exception.getMessage());
+        }
+    }
+
+    @Test
     void getAll() {
         Booking nextBooking = new Booking(LocalDateTime.now().plusMinutes(15), LocalDateTime.now().plusMinutes(10),
                 item, user, BookingStatus.WAITING);

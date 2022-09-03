@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import ru.practicum.shareit.exceptions.errors.BadRequest;
 import ru.practicum.shareit.exceptions.errors.NotFound;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.requests.RequestMapper;
@@ -103,6 +104,26 @@ class RequestServiceImplTest {
         requestDtoToCheck.setItems(Collections.emptyList());
         assertEquals(1, requestService.getAll(2, Optional.of(0), Optional.of(1)).size());
         assertEquals(List.of(requestDtoToCheck), requestService.getAll(2, Optional.of(0), Optional.of(1)));
+    }
+
+    @Test
+    void getAllWrongFromAndSize() {
+        checkUserOk();
+        try {
+            requestService.getAll(2, Optional.of(-1), Optional.of(-1));
+        } catch (BadRequest exception) {
+            assertEquals("From and size parameters are negative or equal zero", exception.getMessage());
+        }
+    }
+
+    @Test
+    void getAllUserNotFound() {
+        checkUserNotExist();
+        try {
+            requestService.getAll(2, Optional.of(0), Optional.of(1));
+        } catch (NotFound exception) {
+            assertEquals("Requester not found", exception.getMessage());
+        }
     }
 
     @Test
