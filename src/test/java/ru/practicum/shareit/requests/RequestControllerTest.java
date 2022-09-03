@@ -1,16 +1,62 @@
 package ru.practicum.shareit.requests;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ru.practicum.shareit.requests.dto.RequestDto;
+import ru.practicum.shareit.requests.service.RequestServiceImpl;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class RequestControllerTest {
 
+    @Mock
+    private RequestServiceImpl requestService;
+
+    @InjectMocks
+    private RequestController requestController;
+
+    @Autowired
+    MockMvc mockMvc;
+
+    private final ObjectMapper mapper = new ObjectMapper();
+    private RequestDto requestDto;
+
+    @BeforeEach
+    void setUpd() {
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(requestController)
+                .build();
+        requestDto = new RequestDto(1, "Description", 1, LocalDateTime.now(), null);
+        mapper.findAndRegisterModules();
+    }
+
     @Test
-    void create() {
+    void create() throws Exception {
+        when(requestService.create(any()))
+                .thenReturn(null);
+        mockMvc.perform((post("/requests"))
+                        .content(mapper.writeValueAsString(requestDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test
