@@ -84,11 +84,23 @@ class BookingControllerTest {
     }
 
     @Test
-    void getAll() throws Exception {
+    void getAllWithoutPaging() throws Exception {
         when(bookingService.getAll(anyLong(), anyString(), any(), any()))
                 .thenReturn(null);
         mockMvc.perform(get("/bookings")
                         .header("X-Sharer-User-Id", 2)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllWithPaging() throws Exception {
+        when(bookingService.getAll(anyLong(), anyString(), any(), any()))
+                .thenReturn(null);
+        mockMvc.perform(get("/bookings")
+                        .header("X-Sharer-User-Id", 2)
+                        .param("from", "0")
+                        .param("size", "1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
@@ -102,11 +114,23 @@ class BookingControllerTest {
     }
 
     @Test
-    void getAllByOwner() throws Exception {
+    void getAllByOwnerWithoutPaging() throws Exception {
         when(bookingService.getAllByOwner(anyLong(), anyString(), any(), any()))
                 .thenReturn(null);
         mockMvc.perform(get("/bookings/owner")
                         .header("X-Sharer-User-Id", 1)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllByOwnerWithPaging() throws Exception {
+        when(bookingService.getAllByOwner(anyLong(), anyString(), any(), any()))
+                .thenReturn(null);
+        mockMvc.perform(get("/bookings/owner")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("from", "0")
+                        .param("size", "1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
