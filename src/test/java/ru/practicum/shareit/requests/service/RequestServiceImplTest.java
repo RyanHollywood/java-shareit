@@ -95,6 +95,8 @@ class RequestServiceImplTest {
         RequestDto requestDtoToCheck = RequestMapper.toRequestDto(request);
         requestDtoToCheck.setItems(Collections.emptyList());
         assertEquals(requestDtoToCheck, requestService.getById(1, 1));
+
+
     }
 
     @Test
