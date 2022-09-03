@@ -17,13 +17,13 @@ import ru.practicum.shareit.requests.service.RequestServiceImpl;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -68,7 +68,13 @@ class RequestControllerTest {
     }
 
     @Test
-    void getAll() {
+    void getAll() throws Exception {
+        when(requestService.getAll(anyLong(), any(), any()))
+                .thenReturn(List.of(requestDto));
+        mockMvc.perform(get("/requests/all")
+                        .header("X-Sharer-User-Id", 2)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test

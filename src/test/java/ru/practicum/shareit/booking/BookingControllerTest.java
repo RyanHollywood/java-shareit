@@ -18,12 +18,10 @@ import ru.practicum.shareit.booking.service.BookingServiceImpl;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -68,11 +66,17 @@ class BookingControllerTest {
     }
 
     @Test
-    void get() {
+    void getById() {
     }
 
     @Test
-    void getAll() {
+    void getAll() throws Exception {
+        when(bookingService.getAll(anyLong(), anyString(), any(), any()))
+                .thenReturn(null);
+        mockMvc.perform(get("/bookings")
+                        .header("X-Sharer-User-Id", 2)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test
