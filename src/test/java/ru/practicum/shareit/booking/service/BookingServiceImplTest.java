@@ -124,11 +124,44 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getById() {
+    void updateAlreadyUpdated() {
+        checkBookingOk();
+        checkItemOk();
+        booking.setStatus(BookingStatus.APPROVED);
+        try {
+            bookingService.update(1, 1, true);
+        } catch (BadRequest exception) {
+            assertEquals("Booking already approved", exception.getMessage());
+        }
+
+        booking.setStatus(BookingStatus.REJECTED);
+        try {
+            bookingService.update(1, 1, false);
+        } catch (BadRequest exception) {
+            assertEquals("Booking already rejected", exception.getMessage());
+        }
+    }
+
+    @Test
+    void updateUserNotOwner() {
+        create();
+        checkBookingOk();
+        try {
+            bookingService.update(2, 1, true);
+        } catch (NotFound exception) {
+            assertEquals("User is not owner", exception.getMessage());
+        }
+    }
+
+    @Test
+    void getByIdByBooker() {
         checkItemOk();
         checkBookingOk();
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.getById(1, 1));
+    }
 
+    @Test
+    void getByIdItemNotFound() {
         checkItemNotFound();
         checkBookingOk();
         try {
@@ -136,12 +169,26 @@ class BookingServiceImplTest {
         } catch (NotFound exception) {
             assertEquals("Item not found", exception.getMessage());
         }
+    }
 
+    @Test
+    void getByIdBookingNotFound() {
         checkBookingNotFound();
         try {
             bookingService.getById(1, 1);
         } catch (NotFound exception) {
             assertEquals("Booking not found", exception.getMessage());
+        }
+    }
+
+    @Test
+    void getByIdByNotItemOwner() {
+        checkBookingOk();
+        checkItemOk();
+        try {
+            bookingService.getById(3, 1);
+        } catch (NotFound exception) {
+            assertEquals("Booker is not owner or booker", exception.getMessage());
         }
     }
 
@@ -200,7 +247,27 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getAllByOwner() {
+    void getAllWithPaging() {
+        create();
+        when(bookingRepository.findByBookerIdOrderByStartDesc(anyLong(), any()))
+                .thenReturn(List.of(booking));
+        assertEquals(1, bookingService.getAll(1, "ALL",
+                Optional.of(0), Optional.of(1)).size());
+        assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAll(1, "ALL",
+                Optional.of(0), Optional.of(1)).get(0));
+    }
+
+    @Test
+    void getAllWrongFromAndSize() {
+        try {
+            bookingService.getAll(1, "ALL", Optional.of(-1), Optional.of(-1));
+        } catch (BadRequest exception) {
+            assertEquals("From and size parameters are negative or equal zero", exception.getMessage());
+        }
+    }
+
+    @Test
+    void getAllByOwnerWithoutPaging() {
         create();
         checkUserOk();
         when(itemRepository.findAllByOwnerId(anyLong()))
@@ -211,8 +278,30 @@ class BookingServiceImplTest {
                 Optional.empty(), Optional.empty()).size());
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAllByOwner(1, "ALL",
                 Optional.empty(), Optional.empty()).get(0));
+    }
 
+    @Test
+    void getAllByOwnerWithPaging() {
+        create();
+        checkUserOk();
+        when(itemRepository.findAllByOwnerId(anyLong()))
+                .thenReturn(List.of(item));
+        when(bookingRepository.findAllByItemIdInOrderByStartDesc(anyList(), any()))
+                .thenReturn(List.of(booking));
+        assertEquals(1, bookingService.getAllByOwner(1, "ALL",
+                Optional.of(0), Optional.of(1)).size());
+        assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAllByOwner(1, "ALL",
+                Optional.of(0), Optional.of(1)).get(0));
+    }
 
+    @Test
+    void getAllByOwnerWrongFromAndSize() {
+        checkUserOk();
+        try {
+            bookingService.getAllByOwner(1, "ALL", Optional.of(-1), Optional.of(-1));
+        } catch (BadRequest exception) {
+            assertEquals("From and size parameters are negative or equal zero", exception.getMessage());
+        }
     }
 
     @Test
