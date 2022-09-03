@@ -77,7 +77,7 @@ class RequestServiceImplTest {
         try {
             requestService.getByRequester(1);
         } catch (NotFound exception) {
-            assertEquals("Requester not exists",exception.getMessage());
+            assertEquals("Requester not exists", exception.getMessage());
         }
     }
 
@@ -107,7 +107,7 @@ class RequestServiceImplTest {
         try {
             requestService.getById(1, 1);
         } catch (NotFound exception) {
-            assertEquals("Requester not exists",exception.getMessage());
+            assertEquals("Requester not exists", exception.getMessage());
         }
     }
 
@@ -122,7 +122,7 @@ class RequestServiceImplTest {
         try {
             requestService.delete(1);
         } catch (NotFound exception) {
-            assertEquals("Request not found",exception.getMessage());
+            assertEquals("Request not found", exception.getMessage());
         }
     }
 
@@ -140,6 +140,7 @@ class RequestServiceImplTest {
         when(requestRepository.findById(anyLong()))
                 .thenReturn(Optional.of(request));
     }
+
     private void checkRequestNotFound() {
         when(requestRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
