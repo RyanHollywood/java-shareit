@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,7 +20,9 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -65,7 +68,7 @@ class ItemControllerTest {
     }
 
     @Test
-    void get() {
+    void getById() {
     }
 
     @Test
@@ -73,7 +76,11 @@ class ItemControllerTest {
     }
 
     @Test
-    void delete() {
+    void deleteById() throws Exception {
+        mockMvc.perform(delete("/items/1"))
+                .andExpect(status().isOk());
+        Mockito.verify(itemService, times(1))
+                .delete(anyLong());
     }
 
     @Test
