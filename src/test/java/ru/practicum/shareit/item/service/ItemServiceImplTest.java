@@ -59,7 +59,7 @@ class ItemServiceImplTest {
     private Item item;
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         user = new User(2, "User", "Email@email.com");
         itemDto = new ItemDto(1, "Item", "ItemDescription", true, 1, Optional.of(1L));
         item = new Item(1, "Item", "ItemDescription", true, 1, 1);

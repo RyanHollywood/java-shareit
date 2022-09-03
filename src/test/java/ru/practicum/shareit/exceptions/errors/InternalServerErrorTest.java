@@ -10,7 +10,7 @@ class InternalServerErrorTest {
     private String message;
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         message = "InternalServerError";
         internalServerError = new InternalServerError(message);
     }

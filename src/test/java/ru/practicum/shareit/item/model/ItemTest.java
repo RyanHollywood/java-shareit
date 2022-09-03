@@ -16,7 +16,7 @@ class ItemTest {
     private final long requestId = 1;
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         item = new Item(id, name, description, available, ownerId, requestId);
     }
 

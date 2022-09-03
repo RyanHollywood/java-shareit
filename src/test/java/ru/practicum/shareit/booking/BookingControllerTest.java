@@ -8,7 +8,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.service.BookingServiceImpl;
+
+import java.time.LocalDateTime;
 
 @ExtendWith(MockitoExtension.class)
 class BookingControllerTest {
@@ -22,13 +26,19 @@ class BookingControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    @BeforeEach
-    void setup() {
+    private BookingRequestDto bookingRequestDto;
 
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(bookingController)
+                .build();
+        bookingRequestDto = new BookingRequestDto(1, 1, LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusHours(1));
     }
 
     @Test
-    void create() {
+    void create() throws Exception {
+
     }
 
     @Test

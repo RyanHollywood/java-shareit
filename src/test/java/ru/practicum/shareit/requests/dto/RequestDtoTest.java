@@ -19,7 +19,7 @@ class RequestDtoTest {
     private final LocalDateTime created = LocalDateTime.now();
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         requestDto = new RequestDto(id, description, requesterId, created, items);
     }
 

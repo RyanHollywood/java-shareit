@@ -18,7 +18,7 @@ class CommentDtoTest {
     private LocalDateTime created = LocalDateTime.now();
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         commentDto = new CommentDto(id, text, item, authorName, created);
     }
 

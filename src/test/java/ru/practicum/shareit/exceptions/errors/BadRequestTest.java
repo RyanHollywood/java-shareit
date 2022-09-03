@@ -10,7 +10,7 @@ class BadRequestTest {
     private String message;
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         message = "Bad request";
         badRequest = new BadRequest(message);
     }

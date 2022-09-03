@@ -19,7 +19,7 @@ class CommentTest {
     private LocalDateTime created = LocalDateTime.now();
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         comment = new Comment(id, text, item, author, created);
     }
 

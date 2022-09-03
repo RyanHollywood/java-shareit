@@ -10,7 +10,7 @@ class ConflictTest {
     private String message;
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         message = "Conflict";
         conflict = new Conflict(message);
     }

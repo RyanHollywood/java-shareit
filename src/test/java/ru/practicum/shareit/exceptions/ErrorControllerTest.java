@@ -22,7 +22,7 @@ class ErrorControllerTest {
     private ErrorController errorController;
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         badRequestMessage = "Bad request";
         badRequest = new BadRequest(badRequestMessage);
         conflictMessage = "Conflict";

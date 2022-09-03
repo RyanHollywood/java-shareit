@@ -22,7 +22,7 @@ class BookingDtoTest {
 
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         bookingDto = BookingDto.builder()
                 .id(id)
                 .start(start)

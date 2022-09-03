@@ -21,7 +21,7 @@ class BookingTest {
 
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         booking = new Booking(start, end, item, booker, defaultStatus);
         booking.setId(id);
     }

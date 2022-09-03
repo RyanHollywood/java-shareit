@@ -10,7 +10,7 @@ class NotFoundTest {
     private String message;
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         message = "Not found";
         notFound = new NotFound(message);
     }

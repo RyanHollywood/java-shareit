@@ -22,7 +22,7 @@ class RequestMapperTest {
     private final LocalDateTime created = LocalDateTime.now();
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         requestDto = new RequestDto(id, description, requesterId, created, items);
         request = new Request(id, description, requesterId, created);
     }
