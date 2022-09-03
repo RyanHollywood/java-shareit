@@ -47,7 +47,7 @@ class BookingServiceImplTest {
     private User user;
 
     @BeforeEach
-    void reload() {
+    void setUpd() {
         bookingRequestDto = new BookingRequestDto(1, 1, LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusHours(1));
         item = new Item(1, "Item", "ItemDescription", true, 1, 1);
         user = new User(2, "User", "Email@email.com");
@@ -90,6 +90,20 @@ class BookingServiceImplTest {
                 Optional.empty(), Optional.empty()).size());
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAll(1, "ALL",
                 Optional.empty(), Optional.empty()).get(0));
+
+        booking.setStatus(BookingStatus.WAITING);
+        create();
+        assertEquals(1, bookingService.getAll(1, "WAITING",
+                Optional.empty(), Optional.empty()).size());
+        assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAll(1, "WAITING",
+                Optional.empty(), Optional.empty()).get(0));
+
+        booking.setStatus(BookingStatus.REJECTED);
+        create();
+        assertEquals(1, bookingService.getAll(1, "REJECTED",
+                Optional.empty(), Optional.empty()).size());
+        assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAll(1, "REJECTED",
+                Optional.empty(), Optional.empty()).get(0));
     }
 
     @Test
@@ -104,6 +118,8 @@ class BookingServiceImplTest {
                 Optional.empty(), Optional.empty()).size());
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAllByOwner(1, "ALL",
                 Optional.empty(), Optional.empty()).get(0));
+
+
     }
 
     @Test
