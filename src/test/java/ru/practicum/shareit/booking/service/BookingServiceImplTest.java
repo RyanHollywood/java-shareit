@@ -12,6 +12,7 @@ import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.storage.BookingRepository;
+import ru.practicum.shareit.exceptions.errors.NotFound;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
@@ -57,8 +58,8 @@ class BookingServiceImplTest {
 
     @Test
     void create() {
-        checkItem();
-        checkUser();
+        checkItemOk();
+        checkUserOk();
         when(bookingRepository.save(any()))
                 .thenReturn(booking);
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.create(bookingRequestDto));
@@ -68,7 +69,7 @@ class BookingServiceImplTest {
     @Test
     void update() {
         create();
-        checkBooking();
+        checkBookingOk();
         when(bookingRepository.save(any()))
                 .thenReturn(booking);
         assertEquals(BookingStatus.APPROVED, bookingService.update(1, 1, true).getStatus());
@@ -76,9 +77,24 @@ class BookingServiceImplTest {
 
     @Test
     void getById() {
-        checkItem();
-        checkBooking();
+        checkItemOk();
+        checkBookingOk();
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.getById(1, 1));
+
+        checkItemNotFound();
+        checkBookingOk();
+        try {
+            bookingService.getById(1, 1);
+        } catch (NotFound exception) {
+            assertEquals("Item not found", exception.getMessage());
+        }
+
+        checkBookingNotFound();
+        try {
+            bookingService.getById(1, 1);
+        } catch (NotFound exception) {
+            assertEquals("Booking not found", exception.getMessage());
+        }
     }
 
     @Test
@@ -104,12 +120,34 @@ class BookingServiceImplTest {
                 Optional.empty(), Optional.empty()).size());
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAll(1, "REJECTED",
                 Optional.empty(), Optional.empty()).get(0));
+
+        booking.setStart(LocalDateTime.now().minusMinutes(30));
+        create();
+        assertEquals(1, bookingService.getAll(1, "CURRENT",
+                Optional.empty(), Optional.empty()).size());
+        assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAll(1, "CURRENT",
+                Optional.empty(), Optional.empty()).get(0));
+
+        create();
+
+        booking.setEnd(booking.getEnd().minusHours(2));
+        assertEquals(1, bookingService.getAll(1, "PAST",
+                Optional.empty(), Optional.empty()).size());
+        assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAll(1, "PAST",
+                Optional.empty(), Optional.empty()).get(0));
+
+        booking.setStart(LocalDateTime.now().plusMinutes(10));
+        create();
+        assertEquals(1, bookingService.getAll(1, "FUTURE",
+                Optional.empty(), Optional.empty()).size());
+        assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAll(1, "FUTURE",
+                Optional.empty(), Optional.empty()).get(0));
     }
 
     @Test
     void getAllByOwner() {
         create();
-        checkUser();
+        checkUserOk();
         when(itemRepository.findAllByOwnerId(anyLong()))
                 .thenReturn(List.of(item));
         when(bookingRepository.findAllByItemIdInOrderByStartDesc(anyList()))
@@ -124,24 +162,39 @@ class BookingServiceImplTest {
 
     @Test
     void delete() {
-        checkBooking();
+        checkBookingOk();
         bookingService.delete(1);
         Mockito.verify(bookingRepository, times(1))
                 .deleteById(anyLong());
     }
 
-    private void checkItem() {
+    private void checkItemOk() {
         when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
     }
 
-    private void checkUser() {
+    private void checkItemNotFound() {
+        when(itemRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+    }
+
+    private void checkUserOk() {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
     }
 
-    private void checkBooking() {
+    private void checkUserNotFound() {
+        when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+    }
+
+    private void checkBookingOk() {
         when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booking));
+    }
+
+    private void checkBookingNotFound() {
+        when(bookingRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
     }
 }

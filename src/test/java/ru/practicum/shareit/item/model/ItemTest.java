@@ -3,7 +3,7 @@ package ru.practicum.shareit.item.model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ItemTest {
 
@@ -92,7 +92,7 @@ class ItemTest {
     }
 
     @Test
-    void builder() {
+    void builderTest() {
         Item itemByBuilder = Item.builder()
                 .id(id)
                 .name(name)
@@ -102,5 +102,12 @@ class ItemTest {
                 .requestId(requestId)
                 .build();
         assertEquals(itemByBuilder, item);
+    }
+
+    @Test
+    void constructorTest() {
+        Item equalItem = new Item(id, name, description, available, ownerId);
+        equalItem.setRequestId(requestId);
+        assertEquals(item, equalItem);
     }
 }

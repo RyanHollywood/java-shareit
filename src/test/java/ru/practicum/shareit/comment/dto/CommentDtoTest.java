@@ -93,4 +93,15 @@ class CommentDtoTest {
         CommentDto equalCommentDto = new CommentDto(id, text, item, authorName, created);
         assertEquals(equalCommentDto, commentDto);
     }
+
+    @Test
+    void noArgsConstructorTest() {
+        CommentDto equalCommentDto = new CommentDto();
+        equalCommentDto.setId(id);
+        equalCommentDto.setText(text);
+        equalCommentDto.setItem(item);
+        equalCommentDto.setAuthorName(authorName);
+        equalCommentDto.setCreated(created);
+        assertEquals(equalCommentDto, commentDto);
+    }
 }

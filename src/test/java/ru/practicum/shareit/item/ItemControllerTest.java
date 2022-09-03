@@ -13,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -120,6 +122,14 @@ class ItemControllerTest {
     }
 
     @Test
-    void addComment() {
+    void addComment() throws Exception {
+        CommentDto commentDto = new CommentDto(1, "Text", null, "AuthorName", LocalDateTime.now());
+        mockMvc.perform(post("/items/1/comment")
+                        .content(mapper.writeValueAsString(commentDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 }
