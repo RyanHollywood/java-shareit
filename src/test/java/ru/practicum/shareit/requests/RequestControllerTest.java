@@ -64,7 +64,13 @@ class RequestControllerTest {
     }
 
     @Test
-    void getByRequester() {
+    void getByRequester() throws Exception {
+        when(requestService.getByRequester(anyLong()))
+                .thenReturn(List.of(requestDto));
+        mockMvc.perform(get("/requests")
+                        .header("X-Sharer-User-Id", 2)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -91,7 +97,13 @@ class RequestControllerTest {
 
 
     @Test
-    void getById() {
+    void getById() throws Exception {
+        when(requestService.getById(1, 1))
+                .thenReturn(requestDto);
+        mockMvc.perform(get("/requests/1")
+                        .header("X-Sharer-User-Id", 1)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test

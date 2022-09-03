@@ -8,7 +8,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BookingDtoTest {
 
@@ -127,5 +127,27 @@ class BookingDtoTest {
                 .build();
         equalBooking.setId(id);
         assertEquals(equalBooking, bookingDto);
+    }
+
+    @Test
+    void noArgsConstructorTest() {
+        BookingDto dtoWithEmptyConstructor = new BookingDto();
+        dtoWithEmptyConstructor.setId(id);
+        dtoWithEmptyConstructor.setStart(start);
+        dtoWithEmptyConstructor.setEnd(end);
+        dtoWithEmptyConstructor.setBooker(booker);
+        dtoWithEmptyConstructor.setItem(item);
+        dtoWithEmptyConstructor.setStatus(defaultStatus);
+
+        BookingDto equalBooking = BookingDto.builder()
+                .id(id)
+                .start(start)
+                .end(end)
+                .booker(booker)
+                .item(item)
+                .status(defaultStatus)
+                .build();
+
+        assertEquals(equalBooking, dtoWithEmptyConstructor);
     }
 }

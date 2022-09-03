@@ -20,8 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -82,7 +81,13 @@ class ItemControllerTest {
     }
 
     @Test
-    void getById() {
+    void getById() throws Exception {
+        when(itemService.getById(anyLong(), anyLong()))
+                .thenReturn(itemDto);
+        mockMvc.perform(get("/items/1")
+                        .header("X-Sharer-User-Id", 2)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -104,7 +109,14 @@ class ItemControllerTest {
     }
 
     @Test
-    void search() {
+    void search() throws Exception {
+        when(itemService.search(anyString(), anyLong()))
+                .thenReturn(List.of(itemDto));
+        mockMvc.perform(get("/items/search")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("text", "text")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test

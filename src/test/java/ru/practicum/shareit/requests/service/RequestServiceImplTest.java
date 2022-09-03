@@ -72,6 +72,13 @@ class RequestServiceImplTest {
         requestDtoToCheck.setItems(Collections.emptyList());
         assertEquals(1, requestService.getByRequester(1).size());
         assertEquals(List.of(requestDtoToCheck), requestService.getByRequester(1));
+
+        checkUserNotExist();
+        try {
+            requestService.getByRequester(1);
+        } catch (NotFound exception) {
+            assertEquals("Requester not exists",exception.getMessage());
+        }
     }
 
     @Test
@@ -96,7 +103,12 @@ class RequestServiceImplTest {
         requestDtoToCheck.setItems(Collections.emptyList());
         assertEquals(requestDtoToCheck, requestService.getById(1, 1));
 
-
+        checkUserNotExist();
+        try {
+            requestService.getById(1, 1);
+        } catch (NotFound exception) {
+            assertEquals("Requester not exists",exception.getMessage());
+        }
     }
 
     @Test
@@ -105,6 +117,13 @@ class RequestServiceImplTest {
         requestService.delete(1);
         Mockito.verify(requestRepository, times(1))
                 .deleteById(anyLong());
+
+        checkRequestNotFound();
+        try {
+            requestService.delete(1);
+        } catch (NotFound exception) {
+            assertEquals("Request not found",exception.getMessage());
+        }
     }
 
     private void checkUserOk() {
@@ -121,4 +140,9 @@ class RequestServiceImplTest {
         when(requestRepository.findById(anyLong()))
                 .thenReturn(Optional.of(request));
     }
+    private void checkRequestNotFound() {
+        when(requestRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+    }
+
 }
