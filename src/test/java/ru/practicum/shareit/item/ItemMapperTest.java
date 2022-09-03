@@ -41,4 +41,11 @@ class ItemMapperTest {
     void toItem() {
         assertEquals(item, ItemMapper.toItem(itemDto));
     }
+
+    @Test
+    void builderTest() {
+        itemDto.setRequestId(null);
+        item = new Item(id, name, description, available, ownerId);
+        assertEquals(item, ItemMapper.toItem(itemDto));
+    }
 }
