@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,7 +65,20 @@ class ItemControllerTest {
     }
 
     @Test
-    void update() {
+    void update() throws Exception {
+        itemDto.setName("NewName");
+        itemDto.setDescription("NewDescription");
+        itemDto.setAvailable(false);
+        when(itemService.update(anyLong(), anyLong(), any()))
+                .thenReturn(itemDto);
+        JsonNode updateParameters = mapper.readTree("{\"name\":\"NewName\", \"description\": \"NewDescription\", \"available\":false}");
+        mockMvc.perform(patch("/items/1")
+                        .content(mapper.writeValueAsString(updateParameters))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test

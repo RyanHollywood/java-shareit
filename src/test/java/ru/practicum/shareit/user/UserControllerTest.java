@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,7 +62,18 @@ class UserControllerTest {
     }
 
     @Test
-    void update() {
+    void update() throws Exception {
+        userDto.setName("NewName");
+        userDto.setEmail("NewEmail@email.com");
+        when(userService.update(anyLong(), any()))
+                .thenReturn(userDto);
+        JsonNode updateParameters = mapper.readTree("{\"name\":\"NewName\", \"email\": \"NewEmail@email.com\"}");
+        mockMvc.perform(patch("/users/1")
+                        .content(mapper.writeValueAsString(updateParameters))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test

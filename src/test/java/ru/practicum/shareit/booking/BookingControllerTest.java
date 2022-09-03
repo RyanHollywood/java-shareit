@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,7 +63,15 @@ class BookingControllerTest {
     }
 
     @Test
-    void update() {
+    void update() throws Exception {
+        when(bookingService.update(anyLong(), anyLong(), anyBoolean()))
+                .thenReturn(null);
+        mockMvc.perform(patch("/bookings/1")
+                        .param("approved", String.valueOf(true))
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test
