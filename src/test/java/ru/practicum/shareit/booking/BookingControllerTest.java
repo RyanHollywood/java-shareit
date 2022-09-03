@@ -12,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingServiceImpl;
 
 import java.nio.charset.StandardCharsets;
@@ -22,6 +25,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,49 +42,76 @@ class BookingControllerTest {
 
     private final ObjectMapper mapper = new ObjectMapper();
     private BookingRequestDto bookingRequestDto;
+    private Booking booking;
+    private BookingDto bookingDto;
+    private LocalDateTime start;
+    private LocalDateTime end;
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders
                 .standaloneSetup(bookingController)
                 .build();
-        bookingRequestDto = new BookingRequestDto(1, 1, LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusHours(1));
+        start = LocalDateTime.now().plusMinutes(30);
+        end = LocalDateTime.now().plusHours(1);
+        bookingRequestDto = new BookingRequestDto(1, 1, start, end);
+        booking = new Booking(start, end, null, null, BookingStatus.WAITING);
+        booking.setId(1);
+        bookingDto = BookingMapper.toBookingDto(booking);
         mapper.findAndRegisterModules();
     }
 
     @Test
     void create() throws Exception {
         when(bookingService.create(any()))
-                .thenReturn(null);
+                .thenReturn(bookingDto);
         mockMvc.perform((post("/bookings"))
-                        .content(mapper.writeValueAsString(bookingRequestDto))
+                        .content(mapper.writeValueAsString(bookingDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(bookingDto)));
     }
 
     @Test
-    void update() throws Exception {
+    void updateApproved() throws Exception {
+        bookingDto.setStatus(BookingStatus.APPROVED);
         when(bookingService.update(anyLong(), anyLong(), anyBoolean()))
-                .thenReturn(null);
+                .thenReturn(bookingDto);
         mockMvc.perform(patch("/bookings/1")
                         .param("approved", String.valueOf(true))
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(bookingDto)));
+    }
+
+    @Test
+    void updateRejected() throws Exception {
+        bookingDto.setStatus(BookingStatus.REJECTED);
+        when(bookingService.update(anyLong(), anyLong(), anyBoolean()))
+                .thenReturn(bookingDto);
+        mockMvc.perform(patch("/bookings/1")
+                        .param("approved", String.valueOf(false))
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(bookingDto)));
     }
 
     @Test
     void getById() throws Exception {
         when(bookingService.getById(anyLong(), anyLong()))
-                .thenReturn(null);
+                .thenReturn(bookingDto);
         mockMvc.perform(get("/bookings/1")
                         .header("X-Sharer-User-Id", 1)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(bookingDto)));
     }
 
     @Test
