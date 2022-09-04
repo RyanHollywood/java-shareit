@@ -9,6 +9,7 @@ import ru.practicum.shareit.user.model.User;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class BookingDtoTest {
 
@@ -116,7 +117,7 @@ class BookingDtoTest {
     }
 
     @Test
-    void testEquals() {
+    void testEqualsAndHashCode() {
         BookingDto equalBooking = BookingDto.builder()
                 .id(id)
                 .start(start)
@@ -125,8 +126,21 @@ class BookingDtoTest {
                 .item(item)
                 .status(defaultStatus)
                 .build();
-        equalBooking.setId(id);
         assertEquals(equalBooking, bookingDto);
+    }
+
+    @Test
+    void testNoEquals() {
+        long newId = id + 1;
+        BookingDto notEqualBooking = BookingDto.builder()
+                .id(newId)
+                .start(start)
+                .end(end)
+                .booker(booker)
+                .item(item)
+                .status(defaultStatus)
+                .build();
+        assertNotEquals(notEqualBooking, bookingDto);
     }
 
     @Test
