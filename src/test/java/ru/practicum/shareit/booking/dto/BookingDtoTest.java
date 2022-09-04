@@ -117,7 +117,7 @@ class BookingDtoTest {
     }
 
     @Test
-    void testEqualsAndHashCode() {
+    void testEquals() {
         BookingDto equalBooking = BookingDto.builder()
                 .id(id)
                 .start(start)
