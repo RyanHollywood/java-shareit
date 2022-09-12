@@ -103,7 +103,7 @@ public class BookingServiceImpl implements BookingService {
             if (from < 0 || size <= 0) {
                 throw new BadRequest("From and size parameters are negative or equal zero");
             }
-            return filterByState(state, bookingRepository.findByBookerIdOrderByStartDesc(userId, PageRequest.of(from/size, size)));
+            return filterByState(state, bookingRepository.findByBookerIdOrderByStartDesc(userId, PageRequest.of(from / size, size)));
         }
         getUser(userId);
         log.debug("Bookings by booker found");
@@ -120,7 +120,7 @@ public class BookingServiceImpl implements BookingService {
             if (from < 0 || size <= 0) {
                 throw new BadRequest("From and size parameters are negative or equal zero");
             }
-            return filterByState(state, bookingRepository.findAllByItemIdInOrderByStartDesc(itemsIds, PageRequest.of(from/size, size)));
+            return filterByState(state, bookingRepository.findAllByItemIdInOrderByStartDesc(itemsIds, PageRequest.of(from / size, size)));
         }
         log.debug("Bookings by owner found");
         return filterByState(state, bookingRepository.findAllByItemIdInOrderByStartDesc(itemsIds));
