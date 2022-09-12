@@ -15,7 +15,6 @@ import ru.practicum.shareit.requests.storage.RequestRepository;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,17 +55,17 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<RequestDto> getAll(long requesterId, Optional<Integer> from, Optional<Integer> size) {
+    public List<RequestDto> getAll(long requesterId, Integer from, Integer size) {
         if (!userRepository.existsById(requesterId)) {
             log.warn("Requester not found");
             throw new NotFound("Requester not found");
         }
-        if (from.isPresent() && size.isPresent()) {
-            if (from.get() < 0 || size.get() <= 0) {
+        if (from != null && size != null) {
+            if (from < 0 || size <= 0) {
                 throw new BadRequest("From and size parameters are negative or equal zero");
             }
             log.debug("");
-            return requestRepository.findAll(PageRequest.of(from.get(), size.get())).stream()
+            return requestRepository.findAll(PageRequest.of(from, size)).stream()
                     .filter(request -> request.getRequesterId() != requesterId)
                     .map(RequestMapper::toRequestDto)
                     .map(this::setItemRequestDto)

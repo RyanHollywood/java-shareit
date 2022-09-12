@@ -8,7 +8,6 @@ import ru.practicum.shareit.requests.service.RequestServiceImpl;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/requests")
@@ -37,8 +36,8 @@ public class RequestController {
 
     @GetMapping("/all")
     public List<RequestDto> getAll(@RequestHeader("X-Sharer-User-Id") long requesterId,
-                                   @RequestParam(value = "from", required = false) Optional<Integer> from,
-                                   @RequestParam(value = "size", required = false) Optional<Integer> size) {
+                                   @RequestParam(value = "from", required = false) Integer from,
+                                   @RequestParam(value = "size", required = false) Integer size) {
 
         return itemRequestService.getAll(requesterId, from, size);
     }

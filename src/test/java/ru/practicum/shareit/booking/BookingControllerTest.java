@@ -24,11 +24,13 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +43,7 @@ class BookingControllerTest {
     private BookingController bookingController;
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     private final ObjectMapper mapper = new ObjectMapper();
     private BookingRequestDto bookingRequestDto;
@@ -75,6 +77,7 @@ class BookingControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is((int) bookingDto.getId())))
                 .andExpect(content().json(mapper.writeValueAsString(bookingDto)));
     }
 

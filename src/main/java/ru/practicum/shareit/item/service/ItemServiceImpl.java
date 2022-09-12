@@ -28,7 +28,6 @@ import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -133,7 +132,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
-        List<BookingDto> bookings = bookingService.getAll(userId, "PAST", Optional.empty(), Optional.empty());
+        List<BookingDto> bookings = bookingService.getAll(userId, "PAST", null, null);
         List<Long> bookers = bookings.stream()
                 .map(BookingDto::getBooker)
                 .map(User::getId)

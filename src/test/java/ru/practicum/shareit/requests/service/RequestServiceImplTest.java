@@ -91,8 +91,8 @@ class RequestServiceImplTest {
                 .thenReturn(List.of(request));
         RequestDto requestDtoToCheck = RequestMapper.toRequestDto(request);
         requestDtoToCheck.setItems(Collections.emptyList());
-        assertEquals(1, requestService.getAll(1, Optional.empty(), Optional.empty()).size());
-        assertEquals(List.of(requestDtoToCheck), requestService.getAll(1, Optional.empty(), Optional.empty()));
+        assertEquals(1, requestService.getAll(1, null, null).size());
+        assertEquals(List.of(requestDtoToCheck), requestService.getAll(1, null, null));
     }
 
     @Test
@@ -102,15 +102,15 @@ class RequestServiceImplTest {
                 .thenReturn(new PageImpl<>(List.of(request)));
         RequestDto requestDtoToCheck = RequestMapper.toRequestDto(request);
         requestDtoToCheck.setItems(Collections.emptyList());
-        assertEquals(1, requestService.getAll(2, Optional.of(0), Optional.of(1)).size());
-        assertEquals(List.of(requestDtoToCheck), requestService.getAll(2, Optional.of(0), Optional.of(1)));
+        assertEquals(1, requestService.getAll(2, 0, 1).size());
+        assertEquals(List.of(requestDtoToCheck), requestService.getAll(2, 0, 1));
     }
 
     @Test
     void getAllWrongFromAndSize() {
         checkUserOk();
         try {
-            requestService.getAll(2, Optional.of(-1), Optional.of(-1));
+            requestService.getAll(2,-1, -1);
         } catch (BadRequest exception) {
             assertEquals("From and size parameters are negative or equal zero", exception.getMessage());
         }
@@ -120,7 +120,7 @@ class RequestServiceImplTest {
     void getAllUserNotFound() {
         checkUserNotExist();
         try {
-            requestService.getAll(2, Optional.of(0), Optional.of(1));
+            requestService.getAll(2, 0, 1);
         } catch (NotFound exception) {
             assertEquals("Requester not found", exception.getMessage());
         }

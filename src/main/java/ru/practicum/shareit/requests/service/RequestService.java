@@ -3,7 +3,6 @@ package ru.practicum.shareit.requests.service;
 import ru.practicum.shareit.requests.dto.RequestDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface RequestService {
 
@@ -13,7 +12,7 @@ public interface RequestService {
 
     List<RequestDto> getByRequester(long requesterId);
 
-    List<RequestDto> getAll(long requesterId, Optional<Integer> from, Optional<Integer> size);
+    List<RequestDto> getAll(long requesterId, Integer from, Integer size);
 
     void delete(long requestId);
 }

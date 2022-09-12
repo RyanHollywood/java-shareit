@@ -198,49 +198,49 @@ class BookingServiceImplTest {
         when(bookingRepository.findByBookerIdOrderByStartDesc(anyLong()))
                 .thenReturn(List.of(booking));
         assertEquals(1, bookingService.getAll(1, "ALL",
-                Optional.empty(), Optional.empty()).size());
+                null, null).size());
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAll(1, "ALL",
-                Optional.empty(), Optional.empty()).get(0));
+                null, null).get(0));
 
         booking.setStatus(BookingStatus.WAITING);
         create();
         assertEquals(1, bookingService.getAll(1, "WAITING",
-                Optional.empty(), Optional.empty()).size());
+                null, null).size());
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAll(1, "WAITING",
-                Optional.empty(), Optional.empty()).get(0));
+                null, null).get(0));
 
         booking.setStatus(BookingStatus.REJECTED);
         create();
         assertEquals(1, bookingService.getAll(1, "REJECTED",
-                Optional.empty(), Optional.empty()).size());
+                null, null).size());
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAll(1, "REJECTED",
-                Optional.empty(), Optional.empty()).get(0));
+                null, null).get(0));
 
         booking.setStart(LocalDateTime.now().minusMinutes(30));
         create();
         assertEquals(1, bookingService.getAll(1, "CURRENT",
-                Optional.empty(), Optional.empty()).size());
+                null, null).size());
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAll(1, "CURRENT",
-                Optional.empty(), Optional.empty()).get(0));
+                null, null).get(0));
 
         create();
 
         booking.setEnd(booking.getEnd().minusHours(2));
         assertEquals(1, bookingService.getAll(1, "PAST",
-                Optional.empty(), Optional.empty()).size());
+                null, null).size());
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAll(1, "PAST",
-                Optional.empty(), Optional.empty()).get(0));
+                null, null).get(0));
 
         booking.setStart(LocalDateTime.now().plusMinutes(10));
         create();
         assertEquals(1, bookingService.getAll(1, "FUTURE",
-                Optional.empty(), Optional.empty()).size());
+                null, null).size());
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAll(1, "FUTURE",
-                Optional.empty(), Optional.empty()).get(0));
+                null, null).get(0));
 
         String unknownState = "SOMESTATE";
         try {
-            bookingService.getAll(1, unknownState, Optional.empty(), Optional.empty());
+            bookingService.getAll(1, unknownState, null, null);
         } catch (InternalServerError exception) {
             assertEquals("Unknown state: " + unknownState, exception.getMessage());
         }
@@ -252,15 +252,15 @@ class BookingServiceImplTest {
         when(bookingRepository.findByBookerIdOrderByStartDesc(anyLong(), any()))
                 .thenReturn(List.of(booking));
         assertEquals(1, bookingService.getAll(1, "ALL",
-                Optional.of(0), Optional.of(1)).size());
+                0, 1).size());
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAll(1, "ALL",
-                Optional.of(0), Optional.of(1)).get(0));
+                0, 1).get(0));
     }
 
     @Test
     void getAllWrongFromAndSize() {
         try {
-            bookingService.getAll(1, "ALL", Optional.of(-1), Optional.of(-1));
+            bookingService.getAll(1, "ALL", -1, -1);
         } catch (BadRequest exception) {
             assertEquals("From and size parameters are negative or equal zero", exception.getMessage());
         }
@@ -275,9 +275,9 @@ class BookingServiceImplTest {
         when(bookingRepository.findAllByItemIdInOrderByStartDesc(anyList()))
                 .thenReturn(List.of(booking));
         assertEquals(1, bookingService.getAllByOwner(1, "ALL",
-                Optional.empty(), Optional.empty()).size());
+                null, null).size());
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAllByOwner(1, "ALL",
-                Optional.empty(), Optional.empty()).get(0));
+                null, null).get(0));
     }
 
     @Test
@@ -289,16 +289,16 @@ class BookingServiceImplTest {
         when(bookingRepository.findAllByItemIdInOrderByStartDesc(anyList(), any()))
                 .thenReturn(List.of(booking));
         assertEquals(1, bookingService.getAllByOwner(1, "ALL",
-                Optional.of(0), Optional.of(1)).size());
+                0, 1).size());
         assertEquals(BookingMapper.toBookingDto(booking), bookingService.getAllByOwner(1, "ALL",
-                Optional.of(0), Optional.of(1)).get(0));
+                0, 1).get(0));
     }
 
     @Test
     void getAllByOwnerWrongFromAndSize() {
         checkUserOk();
         try {
-            bookingService.getAllByOwner(1, "ALL", Optional.of(-1), Optional.of(-1));
+            bookingService.getAllByOwner(1, "ALL", -1, -1);
         } catch (BadRequest exception) {
             assertEquals("From and size parameters are negative or equal zero", exception.getMessage());
         }
@@ -307,7 +307,7 @@ class BookingServiceImplTest {
     @Test
     void getAllByOwnerWrongOwner() {
         try {
-            bookingService.getAllByOwner(1, "ALL", Optional.of(0), Optional.of(1));
+            bookingService.getAllByOwner(1, "ALL", 0, 1);
         } catch (NotFound exception) {
             assertEquals("User not found", exception.getMessage());
         }

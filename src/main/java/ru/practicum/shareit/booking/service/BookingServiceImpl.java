@@ -20,7 +20,6 @@ import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -99,12 +98,12 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getAll(long userId, String state, Optional<Integer> from, Optional<Integer> size) {
-        if (from.isPresent() && size.isPresent()) {
-            if (from.get() < 0 || size.get() <= 0) {
+    public List<BookingDto> getAll(long userId, String state, Integer from, Integer size) {
+        if (from != null && size != null) {
+            if (from < 0 || size <= 0) {
                 throw new BadRequest("From and size parameters are negative or equal zero");
             }
-            return filterByState(state, bookingRepository.findByBookerIdOrderByStartDesc(userId, PageRequest.of(from.get() / size.get(), size.get())));
+            return filterByState(state, bookingRepository.findByBookerIdOrderByStartDesc(userId, PageRequest.of(from/size, size)));
         }
         getUser(userId);
         log.debug("Bookings by booker found");
@@ -112,16 +111,16 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getAllByOwner(long ownerId, String state, Optional<Integer> from, Optional<Integer> size) {
+    public List<BookingDto> getAllByOwner(long ownerId, String state, Integer from, Integer size) {
         getUser(ownerId);
         List<Long> itemsIds = itemRepository.findAllByOwnerId(ownerId).stream()
                 .map(Item::getId)
                 .collect(Collectors.toList());
-        if (from.isPresent() && size.isPresent()) {
-            if (from.get() < 0 || size.get() <= 0) {
+        if (from != null && size != null) {
+            if (from < 0 || size <= 0) {
                 throw new BadRequest("From and size parameters are negative or equal zero");
             }
-            return filterByState(state, bookingRepository.findAllByItemIdInOrderByStartDesc(itemsIds, PageRequest.of(from.get() / size.get(), size.get())));
+            return filterByState(state, bookingRepository.findAllByItemIdInOrderByStartDesc(itemsIds, PageRequest.of(from/size, size)));
         }
         log.debug("Bookings by owner found");
         return filterByState(state, bookingRepository.findAllByItemIdInOrderByStartDesc(itemsIds));
