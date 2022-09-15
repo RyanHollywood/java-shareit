@@ -43,25 +43,19 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ItemServiceImplTest {
 
+    private final ObjectMapper mapper = new ObjectMapper();
     @Mock
     private ItemRepository itemRepository;
-
     @Mock
     private UserRepository userRepository;
-
     @Mock
     private BookingService bookingService;
-
     @Mock
     private BookingRepository bookingRepository;
-
     @Mock
     private CommentRepository commentRepository;
-
     @InjectMocks
     private ItemServiceImpl itemService;
-
-    private final ObjectMapper mapper = new ObjectMapper();
     private User user;
     private ItemDto itemDto;
     private Item item;
@@ -72,7 +66,7 @@ class ItemServiceImplTest {
     @BeforeEach
     void setUp() {
         user = new User(2, "User", "Email@email.com");
-        itemDto = new ItemDto(1, "Item", "ItemDescription", true, 1, Optional.of(1L));
+        itemDto = new ItemDto(1, "Item", "ItemDescription", true, 1, 1L);
         item = new Item(1, "Item", "ItemDescription", true, 1, 1);
         bookingDto = new BookingDto(1, LocalDateTime.now(), LocalDateTime.now().plusMinutes(30), item, user, BookingStatus.WAITING);
         comment = new Comment(1, "Text", item, user, LocalDateTime.now());

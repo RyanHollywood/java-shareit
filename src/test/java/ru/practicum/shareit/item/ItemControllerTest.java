@@ -20,7 +20,6 @@ import ru.practicum.shareit.item.service.ItemServiceImpl;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
@@ -31,16 +30,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class ItemControllerTest {
 
-    @Mock
-    private ItemServiceImpl itemService;
-
-    @InjectMocks
-    private ItemController itemController;
-
+    private final ObjectMapper mapper = new ObjectMapper();
     @Autowired
     MockMvc mockMvc;
-
-    private final ObjectMapper mapper = new ObjectMapper();
+    @Mock
+    private ItemServiceImpl itemService;
+    @InjectMocks
+    private ItemController itemController;
     private ItemDto itemDto;
 
     @BeforeEach
@@ -48,7 +44,7 @@ class ItemControllerTest {
         mockMvc = MockMvcBuilders
                 .standaloneSetup(itemController)
                 .build();
-        itemDto = new ItemDto(1, "Name", "Description", true, 1, Optional.of(1L));
+        itemDto = new ItemDto(1, "Name", "Description", true, 1, 1L);
         mapper.findAndRegisterModules();
     }
 

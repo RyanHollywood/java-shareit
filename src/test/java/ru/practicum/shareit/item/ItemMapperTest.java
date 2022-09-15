@@ -8,27 +8,26 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ItemMapperTest {
 
-    private Item item;
-    private ItemDto itemDto;
     private final long id = 1;
     private final String name = "Name";
     private final String description = "Description";
     private final boolean available = true;
     private final long ownerId = 1;
+    private Item item;
+    private ItemDto itemDto;
     private BookingItemDto lastBooking = null;
     private BookingItemDto nextBooking = null;
     private List<CommentDto> comments = null;
-    private Optional<Long> requestId = Optional.of(1L);
+    private Long requestId = 1L;
 
     @BeforeEach
     void setUp() {
-        item = new Item(id, name, description, available, ownerId, requestId.get());
+        item = new Item(id, name, description, available, ownerId, requestId);
         itemDto = new ItemDto(id, name, description, available, ownerId, requestId);
     }
 
