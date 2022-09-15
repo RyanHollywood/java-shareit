@@ -53,6 +53,10 @@ public class BookingServiceImpl implements BookingService {
             log.warn("Start time and end time cannot be in past");
             throw new BadRequest("Start time and end time cannot be in past");
         }
+        if (bookingRequestDto.getEnd().isBefore(bookingRequestDto.getStart())) {
+            log.warn("Start time and end time cannot be in past");
+            throw new BadRequest("Start time and end time cannot be in past");
+        }
         Booking booking = BookingMapper.toBooking(bookingRequestDto);
         booking.setItem(itemToBook);
         booking.setBooker(booker);
