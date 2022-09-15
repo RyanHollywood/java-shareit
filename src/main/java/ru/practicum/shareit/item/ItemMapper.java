@@ -10,15 +10,26 @@ public class ItemMapper {
                 item.getName(),
                 item.getDescription(),
                 item.isAvailable(),
-                item.getOwnerId());
+                item.getOwnerId(),
+                item.getRequestId());
     }
 
     public static Item toItem(ItemDto itemDto) {
+        if (itemDto.getRequestId() != null) {
+            return Item.builder()
+                    .id(itemDto.getId())
+                    .name(itemDto.getName())
+                    .description(itemDto.getDescription())
+                    .available(itemDto.getAvailable())
+                    .ownerId(itemDto.getOwnerId())
+                    .requestId(itemDto.getRequestId())
+                    .build();
+        }
         return Item.builder()
                 .id(itemDto.getId())
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
-                .available(itemDto.isAvailable())
+                .available(itemDto.getAvailable())
                 .ownerId(itemDto.getOwnerId())
                 .build();
     }

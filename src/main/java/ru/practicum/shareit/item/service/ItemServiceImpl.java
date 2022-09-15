@@ -22,7 +22,9 @@ import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -39,7 +41,8 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
 
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, BookingService bookingService, BookingRepository bookingRepository, CommentRepository commentRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, BookingService bookingService,
+                           BookingRepository bookingRepository, CommentRepository commentRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingService = bookingService;
@@ -59,11 +62,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto update(long id, long ownerId, JsonNode object) {
-        Item itemToUpdate = itemRepository.findById(id).orElseThrow(() -> {
-            log.warn("Item not found");
-            throw new NotFound("Item not found");
-        });
-        if (ownerId != itemRepository.findById(id).get().getOwnerId()) {
+        Item itemToUpdate = getItem(id);
+        if (ownerId != itemToUpdate.getOwnerId()) {
             log.warn("User is not owner of item");
             throw new NotFound("User is not owner of item");
         }
@@ -84,10 +84,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getById(long id, long ownerId) {
-        Item itemToGet = itemRepository.findById(id).orElseThrow(() -> {
-            log.warn("Item not found");
-            return new NotFound("Item not found");
-        });
+        Item itemToGet = getItem(id);
         ItemDto itemDtoToGet = ItemMapper.toItemDto(itemToGet);
         List<Booking> bookings = bookingRepository.findAllByItemIdInOrderByStartDesc(List.of(id));
         if (ownerId == itemDtoToGet.getOwnerId()) {
@@ -128,13 +125,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void delete(long id) {
+        getItem(id);
         itemRepository.deleteById(id);
         log.debug("Item deleted");
     }
 
     @Override
     public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
-        List<BookingDto> bookings = bookingService.getAll(userId, "PAST");
+        List<BookingDto> bookings = bookingService.getAll(userId, "PAST", null, null);
         List<Long> bookers = bookings.stream()
                 .map(BookingDto::getBooker)
                 .map(User::getId)
@@ -143,7 +141,7 @@ public class ItemServiceImpl implements ItemService {
             throw new BadRequest("User have not booked the item");
         }
         Comment commentToAdd = CommentMapper.toComment(commentDto);
-        commentToAdd.setItem(itemRepository.findById(userId).orElseThrow(() -> {
+        commentToAdd.setItem(itemRepository.findById(itemId).orElseThrow(() -> {
             log.warn("Item not found");
             throw new NotFound("Item not found");
         }));
@@ -151,8 +149,15 @@ public class ItemServiceImpl implements ItemService {
             log.warn("Author not found");
             throw new NotFound("Author not found");
         }));
-        commentToAdd.setCreated(LocalDateTime.now());
+        commentToAdd.setCreated(LocalDateTime.of(LocalDate.now(), LocalTime.of(LocalTime.now().getHour(), LocalTime.now().getMinute())));
         log.debug("Comment created");
         return CommentMapper.toCommentDto(commentRepository.save(commentToAdd));
+    }
+
+    private Item getItem(long id) {
+        return itemRepository.findById(id).orElseThrow(() -> {
+            log.warn("Item not found");
+            return new NotFound("Item not found");
+        });
     }
 }

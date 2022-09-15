@@ -17,13 +17,13 @@ public class BookingDto {
     private long id;
 
     @NotNull
-    private Item item;
-
-    @NotNull
     private LocalDateTime start;
 
     @NotNull
     private LocalDateTime end;
+
+    @NotNull
+    private Item item;
 
     private User booker;
 
