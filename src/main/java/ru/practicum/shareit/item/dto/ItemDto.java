@@ -8,7 +8,6 @@ import ru.practicum.shareit.comment.dto.CommentDto;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Optional;
 
 @Data
 @NoArgsConstructor
@@ -30,9 +29,9 @@ public class ItemDto {
     private BookingItemDto lastBooking;
     private BookingItemDto nextBooking;
     private List<CommentDto> comments;
-    private Optional<Long> requestId;
+    private Long requestId;
 
-    public ItemDto(long id, String name, String description, Boolean available, long ownerId, Optional<Long> requestId) {
+    public ItemDto(long id, String name, String description, Boolean available, long ownerId, Long requestId) {
         this.id = id;
         this.name = name;
         this.description = description;
