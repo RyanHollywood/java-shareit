@@ -73,6 +73,7 @@ public class RequestServiceImpl implements RequestService {
         }
         log.debug("");
         return requestRepository.findAll().stream()
+                .filter(request -> request.getRequesterId() != requesterId)
                 .map(RequestMapper::toRequestDto)
                 .map(this::setItemRequestDto)
                 .collect(Collectors.toList());

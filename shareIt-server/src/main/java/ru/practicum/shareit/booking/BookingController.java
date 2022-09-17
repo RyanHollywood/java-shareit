@@ -26,13 +26,13 @@ public class BookingController {
         return bookingService.create(requestDto);
     }
 
-    @PatchMapping("{bookingId}")
+    @PatchMapping("/{bookingId}")
     public BookingDto update(@RequestHeader(value = "X-Sharer-User-Id") long userId, @PathVariable long bookingId,
                              @RequestParam(value = "approved") boolean parameter) {
         return bookingService.update(userId, bookingId, parameter);
     }
 
-    @GetMapping("{bookingId}")
+    @GetMapping("/{bookingId}")
     public BookingDto get(@RequestHeader(value = "X-Sharer-User-Id") long userId, @PathVariable long bookingId) {
         return bookingService.getById(userId, bookingId);
     }
@@ -44,6 +44,7 @@ public class BookingController {
                                    @RequestParam(value = "size", required = false) Integer size) {
         return bookingService.getAll(userId, state, from, size);
     }
+
 
     @DeleteMapping("/{bookingId}")
     public void delete(@PathVariable long bookingId) {
@@ -57,4 +58,5 @@ public class BookingController {
                                           @RequestParam(value = "size", required = false) Integer size) {
         return bookingService.getAllByOwner(ownerId, state, from, size);
     }
+
 }

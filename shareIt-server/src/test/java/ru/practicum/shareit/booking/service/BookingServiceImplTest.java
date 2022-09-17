@@ -259,6 +259,8 @@ class BookingServiceImplTest {
 
     @Test
     void getAllWrongFromAndSize() {
+        create();
+        checkUserOk();
         try {
             bookingService.getAll(1, "ALL", -1, -1);
         } catch (BadRequest exception) {

@@ -16,6 +16,7 @@
 
 	<modules>
 		<module>shareIt-server</module>
+		<module>shareIt-gateway</module>
 	</modules>
 
 	<name>ShareIt</name>

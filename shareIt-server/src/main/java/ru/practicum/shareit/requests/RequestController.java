@@ -24,7 +24,7 @@ public class RequestController {
     public RequestDto create(@RequestHeader("X-Sharer-User-Id") long requesterId,
                              @Valid @RequestBody RequestDto requestDto) {
         requestDto.setRequesterId(requesterId);
-        requestDto.setCreated(LocalDateTime.now());
+        requestDto.setCreated(LocalDateTime.now().withNano(0));
         return itemRequestService.create(requestDto);
 
     }

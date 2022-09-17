@@ -103,13 +103,13 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getAll(long userId, String state, Integer from, Integer size) {
+        getUser(userId);
         if (from != null && size != null) {
             if (from < 0 || size <= 0) {
                 throw new BadRequest("From and size parameters are negative or equal zero");
             }
             return filterByState(state, bookingRepository.findByBookerIdOrderByStartDesc(userId, PageRequest.of(from / size, size)));
         }
-        getUser(userId);
         log.debug("Bookings by booker found");
         return filterByState(state, bookingRepository.findByBookerIdOrderByStartDesc(userId));
     }
