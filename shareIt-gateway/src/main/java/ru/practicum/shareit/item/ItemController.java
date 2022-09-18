@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
+import javax.validation.Valid;
+
 @Controller
 @RequiredArgsConstructor
 @Slf4j
@@ -60,7 +62,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<?> addComment(@RequestHeader(value = "X-Sharer-User-Id") long userId,
                                         @PathVariable long itemId,
-                                        @RequestBody CommentDto comment) {
+                                        @Valid @RequestBody CommentDto comment) {
         return itemClient.addComment(userId, itemId, comment);
     }
 }
