@@ -10,47 +10,33 @@ import ru.practicum.shareit.exceptions.errors.Conflict;
 import ru.practicum.shareit.exceptions.errors.InternalServerError;
 import ru.practicum.shareit.exceptions.errors.NotFound;
 
+import java.util.Map;
+
 @ControllerAdvice
 @Slf4j
 public class ErrorHandler {
 
-    /*
     @ExceptionHandler
-    public ResponseEntity<?> handle(final BadRequestException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<?> handle(final NotFound exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
-    }
-     */
-
-    @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleException(BadRequestException exception) {
-        log.error(exception.getMessage());
+    public String handleIncorrectParameterException(final BadRequestException exception) {
         return exception.getMessage();
     }
 
-    @ExceptionHandler(NotFound.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleException(NotFound exception) {
-        log.error(exception.getMessage());
+    public String handleIncorrectParameterException(final NotFound exception) {
         return exception.getMessage();
     }
 
-    @ExceptionHandler(Conflict.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public String handleException(Conflict exception) {
-        log.error(exception.getMessage());
+    public String handleIncorrectParameterException(final Conflict exception) {
         return exception.getMessage();
     }
 
-    @ExceptionHandler(InternalServerError.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public String handleException(InternalServerError exception) {
-        log.error(exception.getMessage());
-        return exception.getMessage();
+    public Map handleIncorrectParameterException(final InternalServerError exception) {
+        return Map.of("error", exception.getMessage());
     }
 }
