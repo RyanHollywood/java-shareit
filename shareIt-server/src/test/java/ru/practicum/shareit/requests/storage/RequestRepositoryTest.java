@@ -1,19 +1,15 @@
 package ru.practicum.shareit.requests.storage;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.annotation.Rollback;
 import ru.practicum.shareit.requests.model.Request;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 @AutoConfigureTestDatabase
@@ -37,6 +33,7 @@ class RequestRepositoryTest {
         request = new Request(1L, "Description", 1, LocalDateTime.now());
     }
 
+    /*
     @Test
     @Rollback(false)
     void findAllByRequesterId() {
@@ -44,4 +41,5 @@ class RequestRepositoryTest {
         requestRepository.save(request);
         assertEquals(request, requestRepository.findAllByRequesterId(1).get(0));
     }
+     */
 }

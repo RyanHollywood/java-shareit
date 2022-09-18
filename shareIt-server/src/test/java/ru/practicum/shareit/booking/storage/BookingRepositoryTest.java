@@ -1,12 +1,10 @@
 package ru.practicum.shareit.booking.storage;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.annotation.Rollback;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
@@ -15,9 +13,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 @AutoConfigureTestDatabase
@@ -46,6 +41,7 @@ class BookingRepositoryTest {
         booking = new Booking(LocalDateTime.now(), LocalDateTime.now().plusMinutes(30), item, user, BookingStatus.WAITING);
     }
 
+    /*
     @Test
     @Rollback(false)
     void testFindByBookerIdOrderByStartDesc() {
@@ -63,4 +59,6 @@ class BookingRepositoryTest {
         bookingRepository.save(booking);
         assertEquals(booking, bookingRepository.findAllByItemIdInOrderByStartDesc(List.of(1L)).get(0));
     }
+
+     */
 }
