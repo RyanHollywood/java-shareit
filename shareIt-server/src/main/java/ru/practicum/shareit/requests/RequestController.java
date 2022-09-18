@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.requests.dto.RequestDto;
 import ru.practicum.shareit.requests.service.RequestServiceImpl;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,7 +21,7 @@ public class RequestController {
 
     @PostMapping
     public RequestDto create(@RequestHeader("X-Sharer-User-Id") long requesterId,
-                             @Valid @RequestBody RequestDto requestDto) {
+                             @RequestBody RequestDto requestDto) {
         requestDto.setRequesterId(requesterId);
         requestDto.setCreated(LocalDateTime.now().withNano(0));
         return itemRequestService.create(requestDto);
